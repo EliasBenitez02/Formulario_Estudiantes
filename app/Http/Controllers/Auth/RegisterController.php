@@ -35,11 +35,12 @@ class RegisterController extends Controller
         ]);
 
         // Validación para que solo exista un profesor
-        if ($request->role_id == Role::where('name', 'Profesor')->first()->id) {
-            if (User::where('role_id', $request->role_id)->exists()) {
-                return back()->withErrors(['role_id' => 'Ya existe un usuario con rol Profesor.'])->withInput();
-            }
-        }
+if ($request->role_id == Role::where('name', 'Profesor')->first()->id) {
+    if (User::where('role_id', $request->role_id)->exists()) {
+        return back()->with('alert', 'Ya existe un usuario con rol Profesor.');
+    }
+}
+
 
         $photoPath = null;
         if ($request->hasFile('profile_photo')) {
