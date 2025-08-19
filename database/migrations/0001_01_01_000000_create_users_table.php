@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('dni')->unique();
             $table->string('carrera')->nullable();
             $table->date('fecha_nacimiento')->nullable();
-           // $table->foreignId('role_id')->constrained('roles');
+            $table->foreignId('role_id')->constrained('roles');
             $table->rememberToken();
             $table->timestamps();
         });
