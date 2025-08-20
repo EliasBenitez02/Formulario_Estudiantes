@@ -16,18 +16,31 @@ class LoginController extends Controller
     public function login(Request $request)
     {
         $credentials = $request->validate([
-            'email' => ['required', 'email'],
+            'email'    => ['required', 'email'],
             'password' => ['required'],
         ]);
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-            return redirect()->intended('/');
+
+            $user = Auth::user();
+
+            // Redirección por rol
+            if ($user->role && $user->role->name === 'alumno') {
+                return redirect()->route('alumno.dashboard');
+            }
+
+            if ($user->role && $user->role->name === 'profesor') {
+                return redirect()->route('profesor.dashboard'); // definila cuando la uses
+            }
+
+            // Fallback si no hay rol o no coincide
+            return redirect('/');
         }
 
         return back()->withErrors([
             'email' => 'Las credenciales no son válidas.',
-        ]);
+        ])->onlyInput('email');
     }
 
     public function logout(Request $request)
@@ -35,6 +48,7 @@ class LoginController extends Controller
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
+
         return redirect('/login');
     }
 }
