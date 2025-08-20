@@ -1,84 +1,112 @@
-{{-- resources/views/dashboard.blade.php --}}
 @extends('layouts.app')
 
-
+@section('title', 'Dashboard Profesor')
 
 @section('content')
-<div class="min-h-screen bg-gray-100 p-6">
-    {{-- Encabezado del sistema --}}
-    <div class="flex flex-col items-center mb-8">
-        <div class="flex items-center gap-3 mb-2">
-            {{-- Icono de profesor --}}
-            <span class="bg-blue-600 text-white rounded-full p-3">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 7v-6m0 0l-9-5m9 5l9-5" />
-                </svg>
-            </span>
-            <h1 class="text-4xl font-bold text-blue-700">SICEP</h1>
-        </div>
-        <span class="text-lg text-gray-600">Sistema Integral de Control Escolar del Profesor</span>
-    </div>
+<div class="min-h-screen bg-gray-100 flex flex-col items-center">
 
-    {{-- Perfil del profesor --}}
-    <div class="flex flex-col items-center mb-10">
-        @if(!empty(auth()->user()->foto))
-            <div class="w-24 h-24 rounded-full overflow-hidden border-4 border-blue-600 mb-2">
-                <img src="{{ asset('uploads/' . auth()->user()->foto) }}" alt="Foto del Profesor" class="w-full h-full object-cover">
-            </div>
-        @endif
-
-        @if(!empty(auth()->user()->name))
-            <div class="text-xl font-semibold text-gray-800">{{ auth()->user()->name }}</div>
-        @endif
-
-        @if(!empty(auth()->user()->email))
-            <div class="text-gray-500">{{ auth()->user()->email }}</div>
-        @endif
-    </div>
-
-    {{-- Buscador --}}
-    <div class="max-w-2xl mx-auto mb-8">
-        <input type="text" placeholder="Buscar alumno por nombre o correo..."
-            class="w-full p-3 rounded-xl border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200">
-    </div>
-
-    {{-- Lista de alumnos --}}
-    <h2 class="text-2xl font-bold mb-4 text-center text-gray-700">Lista de Alumnos</h2>
-    @if(count($alumnos ?? []) > 0)
-        <div class="max-w-5xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            @foreach($alumnos as $alumno)
-                <div class="bg-white rounded-2xl shadow-md p-5 flex flex-col items-center hover:shadow-xl transition duration-300">
-                    <div class="w-20 h-20 bg-gray-200 rounded-full flex items-center justify-center mb-4 overflow-hidden">
-                        @if(!empty($alumno->foto))
-                            <img src="{{ asset('uploads/' . $alumno->foto) }}" alt="Foto de {{ $alumno->name }}" class="w-full h-full object-cover">
-                        @else
-                            <span class="text-gray-400 text-3xl uppercase">{{ substr($alumno->name, 0, 1) }}</span>
-                        @endif
-                    </div>
-                    @if(!empty($alumno->name))
-                        <h3 class="text-lg font-semibold text-gray-800 mb-1 text-center">{{ $alumno->name }}</h3>
-                    @endif
-                    @if(!empty($alumno->email))
-                        <p class="text-gray-500 text-sm text-center">{{ $alumno->email }}</p>
-                    @endif
-                </div>
-            @endforeach
-        </div>
-    @else
-        {{-- Contenedor de mensaje de vaciado --}}
-        <div class="max-w-md mx-auto bg-white p-8 rounded-3xl shadow-lg text-center mt-10">
-            <div class="flex flex-col items-center">
-                <div class="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mb-4">
-                    <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" stroke-width="2"
-                        viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M5.121 17.804A9 9 0 1119.88 6.196 9 9 0 015.12 17.804z"></path>
+    <!-- Header -->
+    <header class="w-full bg-white shadow-sm py-4">
+        <div class="max-w-7xl mx-auto px-4 flex justify-between items-center">
+            
+            <!-- Logo + Nombre -->
+            <div class="flex items-center gap-2">
+                <div class="bg-indigo-100 p-2 rounded-full">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422A12.083 12.083 0 0112 21.5c-2.28-3.132-4.77-5.375-7.16-6.922L12 14z" />
                     </svg>
                 </div>
-                <h2 class="text-lg font-semibold mb-2">No hay alumnos registrados</h2>
-                <p class="text-gray-500">Comienza agregando tu primer alumno al sistema</p>
+                <div>
+                    <h1 class="font-bold text-lg text-gray-800">SICEP</h1>
+                    <span class="text-sm text-gray-500">Panel del Profesor</span>
+                </div>
+            </div>
+
+            <!-- Usuario -->
+            <div class="flex items-center gap-3">
+                <div class="text-right hidden sm:block">
+                    <span class="text-xs text-gray-500">Profesor</span>
+                    <p class="text-gray-800 font-medium">{{ $profesor->name }}</p>
+                </div>
+                <img src="{{ $profesor->profile_photo ?? 'https://ui-avatars.com/api/?name='.$profesor->name.'&background=6366F1&color=fff' }}"
+                    class="h-10 w-10 rounded-full border" alt="avatar">
+            </div>
+        </div>
+    </header>
+
+    <!-- Tarjeta principal -->
+    <main class="w-full max-w-6xl mt-8 px-4">
+        <div class="bg-white rounded-xl shadow-lg p-6 md:p-10 flex flex-col">
+
+            <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+                <div>
+                    <h2 class="text-xl font-semibold text-gray-800">Lista de Alumnos</h2>
+                    <p class="text-sm text-gray-500">{{ $alumnos->count() }} alumnos registrados</p>
+                </div>
+            </div>
+
+            <!-- Buscador -->
+            <div class="mb-6">
+                <input type="text" wire:model="search" placeholder="Buscar por nombre o correo..."
+                    class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            </div>
+
+            <!-- Lista de alumnos -->
+            @if($alumnos->isEmpty())
+                <div class="flex flex-col items-center justify-center py-16 text-center">
+                    <p class="text-gray-600 font-medium">No hay alumnos registrados</p>
+                </div>
+            @else
+                <ul class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    @foreach($alumnos as $alumno)
+                        <li class="bg-gray-50 rounded-lg p-4 shadow-sm flex flex-col items-center">
+                            <img src="{{ $alumno->profile_photo ?? 'https://ui-avatars.com/api/?name='.$alumno->name.'&background=ddd&color=333' }}"
+                                class="h-24 w-24 rounded-full object-cover mb-3" alt="{{ $alumno->name }}">
+                            <p class="font-medium text-gray-800 text-center">{{ $alumno->name }}</p>
+                            <p class="text-sm text-gray-500 text-center">{{ $alumno->email }}</p>
+
+                            <div class="flex gap-2 mt-2">
+                                <button wire:click="verAlumno({{ $alumno->id }})"
+                                    class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 text-sm">
+                                    Ver
+                                </button>
+
+                                <button wire:click="eliminarAlumno({{ $alumno->id }})"
+                                    onclick="confirm('¿Seguro que quieres eliminar este alumno?') || event.stopImmediatePropagation()"
+                                    class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 text-sm">
+                                    Eliminar
+                                </button>
+                            </div>
+                        </li>
+                    @endforeach
+                </ul>
+            @endif
+        </div>
+    </main>
+
+    <!-- Modal Alumno -->
+    @if($alumnoSeleccionado)
+        <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div class="bg-white rounded-lg shadow-lg p-6 w-96 relative">
+                <button wire:click="$set('alumnoSeleccionado', null)"
+                    class="absolute top-2 right-2 text-gray-500 hover:text-gray-700">&times;</button>
+
+                <img src="{{ $alumnoSeleccionado->profile_photo ?? 'https://ui-avatars.com/api/?name='.$alumnoSeleccionado->name.'&background=ddd&color=333' }}"
+                    class="h-32 w-32 rounded-full object-cover mx-auto mb-4">
+
+                <h3 class="text-lg font-semibold text-center mb-2">{{ $alumnoSeleccionado->name }}</h3>
+                <p class="text-sm text-gray-500 text-center mb-4">{{ $alumnoSeleccionado->email }}</p>
+                <p class="text-sm text-gray-500 text-center mb-4">{{ $alumnoSeleccionado->whattsapp }}</p>
+                <p class="text-sm text-gray-500 text-center mb-4">{{ $alumnoSeleccionado->comision }}</p>
+                <p class="text-sm text-gray-500 text-center mb-4">{{ $alumnoSeleccionado->dni }}</p>
+                <p class="text-sm text-gray-500 text-center mb-4">{{ $alumnoSeleccionado->caarrera }}</p>
+                <p class="text-sm text-gray-500 text-center mb-4">{{ $alumnoSeleccionado->fecha_nacimiento }}</p>
+                <p class="text-sm text-gray-500 text-center mb-4">{{ $alumnoSeleccionado->email }}</p>
+
             </div>
         </div>
     @endif
+
 </div>
 @endsection

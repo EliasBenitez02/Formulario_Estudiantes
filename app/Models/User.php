@@ -34,10 +34,11 @@ class User extends Authenticatable
         return $this->belongsTo(Role::class);
     }
 
-    public function socialProfiles()
-    {
-        return $this->hasMany(SocialProfile::class);
-    }
+    public function socialProfile()
+{
+    return $this->hasOne(\App\Models\SocialProfile::class);
+}
+
 
     /**
      * The attributes that should be hidden for serialization.
