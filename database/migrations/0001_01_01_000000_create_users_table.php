@@ -17,9 +17,23 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+
+            // Campos extras
+            $table->string('whatsapp')->nullable();
+            $table->string('dni')->nullable();
+            $table->string('comision')->nullable();
+            $table->string('carrera')->nullable();
+            $table->date('fecha_nacimiento')->nullable();
+            $table->string('linkedin')->nullable();
+            $table->string('github')->nullable();
+
+            // Rol → profesor | alumno
+            $table->enum('role', ['profesor', 'alumno'])->default('alumno');
+
             $table->rememberToken();
             $table->timestamps();
         });
+
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
             $table->string('email')->primary();
