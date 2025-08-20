@@ -5,6 +5,16 @@
                         <div class="w-full max-w-2xl mx-auto">
                             <div class="bg-white shadow-xl rounded-2xl px-8 py-12">
                                 <h2 class="text-3xl font-bold mb-6 text-center text-blue-700">Crear cuenta</h2>
+                            @if ($errors->any())
+    <div class="mb-4 p-4 rounded-lg bg-red-100 border border-red-400 text-red-700">
+        <strong class="font-bold">¡Ups! Algo salió mal:</strong>
+        <ul class="mt-2 list-disc list-inside">
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
                                 <form method="POST" action="{{ route('register') }}" enctype="multipart/form-data" class="space-y-4">
                                     @csrf
                                     <div class="flex flex-col items-center mb-6">
@@ -93,6 +103,24 @@
                                         <div id="social-inputs"></div>
                                     </div>
                                     <script>
+                                    // ...existing code...
+                                    
+                                    function previewProfilePhoto(event) {
+                                        const input = event.target;
+                                        const previewDiv = document.getElementById('profile_photo_preview');
+                                        const previewImg = document.getElementById('profile_photo_img');
+                                        if (input.files && input.files[0]) {
+                                            const reader = new FileReader();
+                                            reader.onload = function(e) {
+                                                previewImg.src = e.target.result;
+                                                previewDiv.classList.remove('hidden');
+                                            }
+                                            reader.readAsDataURL(input.files[0]);
+                                        } else {
+                                            previewDiv.classList.add('hidden');
+                                            previewImg.src = '#';
+                                        }
+                                    }
                                     function togglePassword(id) {
                                         const input = document.getElementById(id);
                                         const eye = document.getElementById('eye-' + id);
