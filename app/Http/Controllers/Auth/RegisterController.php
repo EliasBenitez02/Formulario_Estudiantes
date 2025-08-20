@@ -15,6 +15,8 @@ class RegisterController extends Controller
 {
     public function showRegistrationForm()
     {
+        // Verificar si ya existe un profesor registrado
+        // y filtrar los roles disponibles en consecuencia
         $profesor = Role::where('name', 'Profesor')->first();
         $profesorId = $profesor ? $profesor->id : null;
         $profesorRegistrado = $profesorId ? User::where('role_id', $profesorId)->exists() : false;
@@ -32,7 +34,9 @@ class RegisterController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email',
-            'password' => 'required|string|confirmed|min:6',
+           'password' => [ 'required', 'string','confirmed', 'min:6',
+            'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).+$/'
+           ],
             'whatsapp' => 'required|string|unique:users,whatsapp',
             'comision' => 'required|string',
             'dni' => 'required|string|unique:users,dni',
