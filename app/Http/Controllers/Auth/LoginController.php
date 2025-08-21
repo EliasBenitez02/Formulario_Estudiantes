@@ -15,6 +15,7 @@ class LoginController extends Controller
 
     public function login(Request $request)
     {
+        // Validamos credenciales
         $credentials = $request->validate([
             'email' => ['required', 'email'],
             'password' => ['required'],
@@ -22,7 +23,19 @@ class LoginController extends Controller
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-            return redirect()->intended('/');
+
+            // Obtenemos el usuario autenticado
+            $user = Auth::user();
+
+            // Redirigir según rol
+            if ($user->role_id == 1) { // Profesor
+                return redirect()->route('profesor.dashboard');
+            } elseif ($user->role_id == 2) { // Alumno
+                return redirect()->route('student.student-dashboard');
+            }
+
+            // Por si acaso no tiene rol asignado
+            return redirect()->route('home');
         }
 
         return back()->withErrors([
@@ -35,6 +48,7 @@ class LoginController extends Controller
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        return redirect('/login');
+
+        return redirect()->route('login');
     }
 }

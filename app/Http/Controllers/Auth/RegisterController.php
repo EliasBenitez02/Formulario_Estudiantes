@@ -34,9 +34,7 @@ class RegisterController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email',
-           'password' => [ 'required', 'string','confirmed', 'min:6',
-            'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).+$/'
-           ],
+           'password' => [ 'required', 'string','confirmed', 'min:6',],
             'whatsapp' => 'required|string|unique:users,whatsapp',
             'comision' => 'required|string',
             'dni' => 'required|string|unique:users,dni',
@@ -79,11 +77,11 @@ class RegisterController extends Controller
 
             SocialProfile::create([
                 'user_id' => $user->id,
-                'linkedin' => $request->linkedin,
-                'github' => $request->github,
-                'gitlab' => $request->gitlab,
-                'wordpress' => $request->wordpress,
-                'notion' => $request->notion,
+                'linkedin' => $request->linkedin ?? null,
+                'github' => $request->github ?? null,
+                'gitlab' => $request->gitlab ?? null,
+                'wordpress' => $request->wordpress ?? null,
+                'notion' => $request->notion ?? null,
             ]);
 
             DB::commit();
