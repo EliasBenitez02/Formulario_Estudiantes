@@ -19,13 +19,17 @@ class LoginController extends Controller
             $request->session()->regenerate();
             return redirect()->intended('/');
         }
-        return back()->withErrors(['email' => 'Las credenciales no son válidas.',]);
+
+        return back()->withErrors([
+            'email' => 'Las credenciales no son válidas.',
+        ]);
     }
     public function logout(Request $request)
     {
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
+
         return redirect('/login');
     }
 }
