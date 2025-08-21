@@ -8,7 +8,7 @@ use App\Models\SocialProfile;
 use App\Models\Role;
 use Illuminate\Validation\Rule;
 
-#[Layout('layouts.app')]
+#[Layout('components.layouts.app')]
 class StudentDashboard extends Component
 {
     use WithPagination, WithFileUploads;

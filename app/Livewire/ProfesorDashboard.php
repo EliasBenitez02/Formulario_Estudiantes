@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Session;
 
-#[Layout('layouts.app')]
+#[Layout('components.layouts.app')]
 class ProfesorDashboard extends Component
 {
     public User $profesor;
@@ -28,7 +28,7 @@ class ProfesorDashboard extends Component
 
     private function cargarAlumnos()
     {
-        $this->alumnos = User::with('socialProfile')
+        $this->alumnos = User::with('socialProfiles')
             ->where('role_id', 2)
             ->where(function ($query) {
                 $query->where('name', 'like', "%{$this->search}%")
