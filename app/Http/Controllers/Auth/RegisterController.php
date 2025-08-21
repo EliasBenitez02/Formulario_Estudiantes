@@ -15,7 +15,17 @@ class RegisterController extends Controller
 {
     public function showRegistrationForm()
     {
-        $roles = Role::all();
+        // Verificar si ya existe un profesor registrado
+        // y filtrar los roles disponibles en consecuencia
+        $profesor = Role::where('name', 'Profesor')->first();
+        $profesorId = $profesor ? $profesor->id : null;
+        $profesorRegistrado = $profesorId ? User::where('role_id', $profesorId)->exists() : false;
+        $roles = Role::all()->filter(function($role) use ($profesorId, $profesorRegistrado) {
+            if ($role->id == $profesorId && $profesorRegistrado) {
+                return false;
+            }
+            return true;
+        });
         return view('auth.register', compact('roles'));
     }
 
@@ -23,23 +33,28 @@ class RegisterController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|confirmed|min:6',
-            'whatsapp' => 'required|string',
+            'email' => 'required|string|email|max:255|unique:users,email',
+           'password' => [ 'required', 'string','confirmed', 'min:6',
+            'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).+$/'
+           ],
+            'whatsapp' => 'required|string|unique:users,whatsapp',
             'comision' => 'required|string',
-            'dni' => 'required|string|unique:users',
+            'dni' => 'required|string|unique:users,dni',
             'carrera' => 'required|string',
             'fecha_nacimiento' => 'required|date',
             'role_id' => 'required|exists:roles,id',
-            'profile_photo' => 'nullable|image|max:2048',
+            'profile_photo' => 'required|image|max:5048',
+        ], [
+            'email.unique' => 'Este correo ya existe.',
+            'dni.unique' => 'Este DNI ya existe.',
+            'whatsapp.unique' => 'Este número de WhatsApp ya existe.',
         ]);
 
         // Validación para que solo exista un profesor
-if ($request->role_id == Role::where('name', 'Profesor')->first()->id) {
-    if (User::where('role_id', $request->role_id)->exists()) {
-        return back()->with('alert', 'Ya existe un usuario con rol Profesor.');
-    }
-}
+        $profesorId = Role::where('name', 'Profesor')->first()?->id;
+        if ($request->role_id == $profesorId && User::where('role_id', $profesorId)->exists()) {
+            return back()->withErrors(['role_id' => 'Ya existe un profesor registrado.'])->withInput();
+        }
 
 
         $photoPath = null;
