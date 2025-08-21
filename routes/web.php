@@ -21,4 +21,3 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 Route::get('/profesor/dashboard', \App\Livewire\ProfesorDashboard::class)
     ->name('profesor.dashboard');
 
-

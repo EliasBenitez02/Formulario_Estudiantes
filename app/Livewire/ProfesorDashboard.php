@@ -1,16 +1,19 @@
 <?php
 
 namespace App\Livewire;
-
+use App\Models\User;
 use Livewire\Component;
 use Livewire\Attributes\Layout;
-use App\Models\User;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Session;
 
 #[Layout('layouts.app')]
 class ProfesorDashboard extends Component
 {
     public User $profesor;
-    public $alumnos;
+    public $alumnos = [];
     public $search = '';
     public $alumnoSeleccionado = null;
 
@@ -23,14 +26,8 @@ class ProfesorDashboard extends Component
         $this->cargarAlumnos();
     }
 
-    public function updatedSearch()
-    {
-        $this->cargarAlumnos();
-    }
-
     private function cargarAlumnos()
     {
-        // Traemos los usuarios con role_id 2 y su perfil social
         $this->alumnos = User::with('socialProfile')
             ->where('role_id', 2)
             ->where(function ($query) {
@@ -39,23 +36,9 @@ class ProfesorDashboard extends Component
                       ->orWhere('whatsapp', 'like', "%{$this->search}%")
                       ->orWhere('comision', 'like', "%{$this->search}%")
                       ->orWhere('dni', 'like', "%{$this->search}%")
-                      ->orWhere('carrera', 'like', "%{$this->search}%")
-                      ->orWhere('whatsapp', 'like', "%{$this->search}%");
+                      ->orWhere('carrera', 'like', "%{$this->search}%");
             })
             ->get();
-    }
-
-    public function eliminarAlumno($id)
-    {
-        $alumno = User::find($id);
-        if ($alumno) {
-            $alumno->delete();
-            session()->flash('success', 'Alumno eliminado correctamente.');
-        } else {
-            session()->flash('error', 'Alumno no encontrado.');
-        }
-
-        $this->cargarAlumnos();
     }
 
     public function verAlumno($id)
@@ -64,8 +47,33 @@ class ProfesorDashboard extends Component
         $this->alumnoSeleccionado = User::with('socialProfile')->findOrFail($id);
     }
 
+    public function eliminarAlumno($id)
+    {
+        $alumno = User::find($id);
+
+        if ($alumno) {
+            $alumno->delete();
+            session()->flash('mensaje', 'Alumno eliminado correctamente.');
+            $this->cargarAlumnos(); // refresca lista sin recargar página
+        }
+    }
+
+    public function cerrarModal()
+    {
+        $this->alumnoSeleccionado = null;
+    }
+
+    public function updatingSearch()
+    {
+        $this->cargarAlumnos();
+    }
+
     public function render()
     {
-        return view('livewire.profesor.dashboard');
+        return view('livewire.profesor.dashboard', [
+            'alumnos' => $this->alumnos,
+        ]);
     }
 }
+
+
