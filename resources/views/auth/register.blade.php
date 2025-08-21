@@ -14,9 +14,7 @@
                                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <div class="relative">
                                             <input type="text" name="name" placeholder="Nombre completo" class="w-full pl-10 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" required value="{{ old('name') }}">
-                                            @error('name')
-                                                <span class="text-red-600 text-xs">{{ $message }}</span>
-                                            @enderror
+                                            
                                             <span class="absolute left-3 top-2.5 text-gray-400">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 15c2.5 0 4.847.657 6.879 1.804M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
                                             </span>
@@ -62,9 +60,7 @@
                                         </div>
                                         <div class="relative">
                                             <input type="text" name="comision" placeholder="Comisión" class="w-full pl-10 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" required value="{{ old('comision') }}">
-                                            @error('comision')
-                                                <span class="text-red-600 text-xs">{{ $message }}</span>
-                                            @enderror
+                                          
                                             <span class="absolute left-3 top-2.5 text-gray-400">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2a2 2 0 012-2h2a2 2 0 012 2v2m-6 0h6" /></svg>
                                             </span>
@@ -80,18 +76,14 @@
                                         </div>
                                         <div class="relative">
                                             <input type="text" name="carrera" placeholder="Carrera" class="w-full pl-10 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" required value="{{ old('carrera') }}">
-                                            @error('carrera')
-                                                <span class="text-red-600 text-xs">{{ $message }}</span>
-                                            @enderror
+                                         
                                             <span class="absolute left-3 top-2.5 text-gray-400">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c1.104 0 2-.896 2-2s-.896-2-2-2-2 .896-2 2 .896 2 2 2zm0 0v2m0 4v2m-4-6a4 4 0 018 0v2a4 4 0 01-8 0v-2z" /></svg>
                                             </span>
                                         </div>
                                         <div class="relative">
                                             <input type="date" name="fecha_nacimiento" placeholder="Fecha de nacimiento" class="w-full pl-10 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" required value="{{ old('fecha_nacimiento') }}">
-                                            @error('fecha_nacimiento')
-                                                <span class="text-red-600 text-xs">{{ $message }}</span>
-                                            @enderror
+                                        
                                             <span class="absolute left-3 top-2.5 text-gray-400">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10m-10 4h10m-10 4h10" /></svg>
                                             </span>
@@ -120,7 +112,7 @@
                                         <div id="social-inputs"></div>
                                     </div>
                                     <script>
-                                    // ...existing code...
+                                
                                     
                                     function previewProfilePhoto(event) {
                                         const input = event.target;
