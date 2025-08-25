@@ -8,7 +8,7 @@
 </head>
 <body>
     <div class="container mx-auto">
-        {{ $slot }}
+       @yield('content')
     </div>
     @livewireScripts
 </body>
