@@ -8,9 +8,10 @@
     <title>@yield('title', 'Dasboard')</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-light d-flex flex-column justify-content-center align-items-center min-vh-100">
-    <main class="container flex-grow-1 d-flex flex-column justify-content-center align-items-center">
-        @yield('content')
-    </main>
+<body>
+    <div class="container mx-auto">
+        {{ $slot }}
+    </div>
+    @livewireScripts
 </body>
 </html>
