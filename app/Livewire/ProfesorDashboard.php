@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Session;
 
-#[Layout('components.layouts.app')]
+#[Layout('layouts.app')]
 class ProfesorDashboard extends Component
 {
     public User $profesor;
@@ -21,24 +21,7 @@ class ProfesorDashboard extends Component
     {
         // Profesor logueado
         $this->profesor = auth()->user();
-
-        // Cargar alumnos
-        $this->cargarAlumnos();
-    }
-
-    private function cargarAlumnos()
-    {
-        $this->alumnos = User::with('socialProfiles')
-            ->where('role_id', 2)
-            ->where(function ($query) {
-                $query->where('name', 'like', "%{$this->search}%")
-                      ->orWhere('email', 'like', "%{$this->search}%")
-                      ->orWhere('whatsapp', 'like', "%{$this->search}%")
-                      ->orWhere('comision', 'like', "%{$this->search}%")
-                      ->orWhere('dni', 'like', "%{$this->search}%")
-                      ->orWhere('carrera', 'like', "%{$this->search}%");
-            })
-            ->get();
+ 
     }
 
     public function verAlumno($id)
@@ -63,10 +46,7 @@ class ProfesorDashboard extends Component
         $this->alumnoSeleccionado = null;
     }
 
-    public function updatingSearch()
-    {
-        $this->cargarAlumnos();
-    }
+
 
     public function render()
     {

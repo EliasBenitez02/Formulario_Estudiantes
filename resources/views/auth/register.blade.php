@@ -13,14 +13,14 @@
                                     </div>
                                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <div class="relative">
-                                            <input type="text" name="name" placeholder="Nombre completo" class="w-full pl-10 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" required value="{{ old('name') }}">
+                                            <input type="text" name="name" placeholder=" Nombre completo" class="w-full pl-10 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" required value="{{ old('name') }}">
                                             
                                             <span class="absolute left-3 top-2.5 text-gray-400">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 15c2.5 0 4.847.657 6.879 1.804M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
                                             </span>
                                         </div>
                                         <div class="relative">
-                                            <input type="email" name="email" placeholder="Correo electrónico" class="w-full pl-10 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" required value="{{ old('email') }}">
+                                            <input type="email" name="email" placeholder=" Correo electrónico" class="w-full pl-10 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" required value="{{ old('email') }}">
                                             @error('email')
                                                 <span class="text-red-600 text-xs">{{ $message }}</span>
                                             @enderror
@@ -29,7 +29,7 @@
                                             </span>
                                         </div>
                                         <div class="relative">
-                                            <input type="password" name="password" id="password" placeholder="Contraseña Ejemplo:Juanito01" class="w-full pl-10 pr-10 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" required>
+                                            <input type="password" name="password" id="password" placeholder=" Contraseña" class="w-full pl-10 pr-10 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" required>
                                             @error('password')
                                                 <span class="text-red-600 text-xs">{{ $message }}</span>
                                             @enderror
@@ -41,7 +41,7 @@
                                             </span>
                                         </div>
                                         <div class="relative">
-                                            <input type="password" name="password_confirmation" id="password_confirmation" placeholder="Confirmar contraseña" class="w-full pl-10 pr-10 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" required>
+                                            <input type="password" name="password_confirmation" id="password_confirmation" placeholder=" Confirmar contraseña" class="w-full pl-10 pr-10 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" required>
                                             <span class="absolute left-3 top-2.5 text-gray-400">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c1.104 0 2-.896 2-2s-.896-2-2-2-2 .896-2 2 .896 2 2 2zm0 0v2m0 4v2m-4-6a4 4 0 018 0v2a4 4 0 01-8 0v-2z" /></svg>
                                             </span>
@@ -50,7 +50,7 @@
                                             </span>
                                         </div>
                                         <div class="relative">
-                                            <input type="text" name="whatsapp" placeholder="WhatsApp" class="w-full pl-10 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" required value="{{ old('whatsapp') }}">
+                                            <input type="text" name="whatsapp" placeholder=" WhatsApp" class="w-full pl-10 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" required value="{{ old('whatsapp') }}">
                                             @error('whatsapp')
                                                 <span class="text-red-600 text-xs">{{ $message }}</span>
                                             @enderror
@@ -59,45 +59,42 @@
                                             </span>
                                         </div>
                                         <div class="relative">
-                                            <input type="text" name="comision" placeholder="Comisión" class="w-full pl-10 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" required value="{{ old('comision') }}">
+                                            <input type="text" name=" comision" placeholder=" Comisión" class="w-full pl-10 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" required value="{{ old('comision') }}">
                                           
                                             <span class="absolute left-3 top-2.5 text-gray-400">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2a2 2 0 012-2h2a2 2 0 012 2v2m-6 0h6" /></svg>
                                             </span>
                                         </div>
                                         <div class="relative">
-                                            <input type="text" name="dni" placeholder="DNI" class="w-full pl-10 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" required value="{{ old('dni') }}">
+                                            <input type="text" name="dni" placeholder=" DNI" class="w-full pl-10 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" required value="{{ old('dni') }}">
                                             @error('dni')
-                                                <span class="text-red-600 text-xs">{{ $message }}</span>
+                                                <span class="text-red-600 text-xs">{{ $message }}</span> 
                                             @enderror
                                             <span class="absolute left-3 top-2.5 text-gray-400">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c1.104 0 2-.896 2-2s-.896-2-2-2-2 .896-2 2 .896 2 2 2zm0 0v2m0 4v2m-4-6a4 4 0 018 0v2a4 4 0 01-8 0v-2z" /></svg>
                                             </span>
                                         </div>
                                         <div class="relative">
-                                            <input type="text" name="carrera" placeholder="Carrera" class="w-full pl-10 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" required value="{{ old('carrera') }}">
+                                            <input type="text" name="carrera" placeholder=" Carrera" class="w-full pl-10 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" required value="{{ old('carrera') }}">
                                          
                                             <span class="absolute left-3 top-2.5 text-gray-400">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c1.104 0 2-.896 2-2s-.896-2-2-2-2 .896-2 2 .896 2 2 2zm0 0v2m0 4v2m-4-6a4 4 0 018 0v2a4 4 0 01-8 0v-2z" /></svg>
                                             </span>
                                         </div>
                                         <div class="relative">
-                                            <input type="date" name="fecha_nacimiento" placeholder="Fecha de nacimiento" class="w-full pl-10 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" required value="{{ old('fecha_nacimiento') }}">
+                                            <input type="date" name="fecha_nacimiento" placeholder=" Fecha de nacimiento" class="w-full pl-10 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" required value="{{ old('fecha_nacimiento') }}">
                                         
                                             <span class="absolute left-3 top-2.5 text-gray-400">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10m-10 4h10m-10 4h10" /></svg>
                                             </span>
                                         </div>
                                         <div>
-                                            <select name="role_id" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" required>
-                                                <option value="">Selecciona tu rol</option>
-                                                @foreach($roles as $role)
-                                                    <option value="{{ $role->id }}" {{ old('role_id') == $role->id ? 'selected' : '' }}>{{ $role->name }}</option>
+                                            <select name="curso_id" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" required>
+                                                <option value="">Selecciona tu Curso</option>
+                                                @foreach($cursos as $curso)
+                                                    <option value="{{ $curso->id }}" {{ old('role_id') == $curso->id ? 'selected' : '' }}>{{ $curso->name }}</option>
                                                 @endforeach
                                             </select>
-                                            @error('role_id')
-                                                <span class="text-red-600 text-xs">{{ $message }}</span>
-                                            @enderror
                                         </div>
                                     </div>
                                     <div class="space-y-2">
@@ -155,14 +152,18 @@
                                             const div = document.createElement('div');
                                             div.className = 'flex items-center gap-2 mb-2';
                                             div.id = 'input-' + network;
-                                            div.innerHTML = `<span class='px-3 py-1 rounded-lg bg-${socialInputs[network].color} text-${socialInputs[network].text}'>${socialInputs[network].label}</span><input type='url' name='${network}' class='flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400' placeholder='Enlace de ${socialInputs[network].label}'>`;
+                                            div.innerHTML = `<span class='px-3 py-1 rounded-lg bg-${socialInputs[network].color} 
+                                            text-${socialInputs[network].text}'>${socialInputs[network].label}</span><input type='text' 
+                                            name='${network}' class='flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400' 
+                                            placeholder='Enlace de ${socialInputs[network].label}'>`;
                                             container.appendChild(div);
                                         } else {
                                             inputDiv.remove();
                                         }
                                     }
                                     </script>
-                                    <button type="submit" class="w-full py-2 px-4 bg-blue-600 text-white font-semibold rounded-lg shadow hover:bg-blue-700 transition">Crear cuenta</button>
+                                    <button type="submit" class="w-full py-2 px-4 bg-blue-600 text-white font-semibold rounded-lg shadow hover:bg-blue-700 transition">
+                                        Crear cuenta</button>
                                 </form>
                                 <div class="mt-4 text-center">
                                     <span class="text-gray-600">¿Ya tienes una cuenta?</span>

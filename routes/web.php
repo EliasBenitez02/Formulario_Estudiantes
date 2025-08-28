@@ -39,3 +39,12 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/alumno/dashboard', \App\Livewire\Student\StudentDashboard::class)
         ->name('student.student-dashboard');
 });
+
+// --------------------
+// Dashboard del Admin con Livewire
+// --------------------
+Route::middleware(['auth'])->group(function () {
+    Route::get('/admin/dashboard', function() {
+        return view('admin.dashboard');
+    })->name('admin.dashboard');
+});

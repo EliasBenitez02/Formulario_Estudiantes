@@ -28,11 +28,20 @@ class User extends Authenticatable
         'carrera',
         'fecha_nacimiento',
         'role_id',
+        'course_id',
+        
     ];
+    //relacion con rol
     public function role()
     {
         return $this->belongsTo(Role::class);
     }
+    //relacion con cursos
+    public function course()
+{
+    return $this->belongsTo(Course::class);
+}
+//relacion con redes sociales
 
     public function socialProfiles()
 {

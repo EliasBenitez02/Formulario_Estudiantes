@@ -8,47 +8,64 @@ use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
+    /**
+     * Mostrar formulario de login
+     */
     public function showLoginForm()
     {
         return view('auth.login');
     }
 
+    /**
+     * Manejar login
+     */
     public function login(Request $request)
     {
-        // Validamos credenciales
+        // Validación del form
         $credentials = $request->validate([
-            'email' => ['required', 'email'],
-            'password' => ['required'],
+            'email' => 'required|email',
+            'password' => 'required',
         ]);
 
-        if (Auth::attempt($credentials)) {
+        // Intentar loguear primero como admin
+        if (Auth::guard('admin')->attempt($credentials, $request->filled('remember'))) {
             $request->session()->regenerate();
-
-            // Obtenemos el usuario autenticado
-            $user = Auth::user();
-
-            // Redirigir según rol
-            if ($user->role_id == 1) { // Profesor
-                return redirect()->route('profesor.dashboard');
-            } elseif ($user->role_id == 2) { // Alumno
-                return redirect()->route('student.student-dashboard');
-            }
-
-            // Por si acaso no tiene rol asignado
-            return redirect()->route('home');
+            return redirect()->intended('/admin/dashboard');
         }
 
+        // Si no es admin, intentar como user
+        if (Auth::guard('web')->attempt($credentials, $request->filled('remember'))) {
+            $request->session()->regenerate();
+            $user = Auth::guard('web')->user();
+            if ($user->role_id == 1) {
+                return redirect()->intended('/admin/dashboard');
+            } elseif ($user->role_id == 2) {
+                return redirect()->intended('/profesor/dashboard');
+            } else {
+                return redirect()->intended('/student/dashboard');
+            }
+        }
+
+        // Si no coincide en ninguna tabla
         return back()->withErrors([
-            'email' => 'Las credenciales no son válidas.',
-        ]);
+            'email' => 'Las credenciales no coinciden con nuestros registros.',
+        ])->onlyInput('email');
     }
 
+    /**
+     * Cerrar sesión
+     */
     public function logout(Request $request)
     {
-        Auth::logout();
+        if (Auth::guard('admin')->check()) {
+            Auth::guard('admin')->logout();
+        } else {
+            Auth::guard('web')->logout();
+        }
+
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('login');
+        return redirect('/');
     }
 }
