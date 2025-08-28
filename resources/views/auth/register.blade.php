@@ -1,3 +1,12 @@
+@if ($errors->any())
+                <div class="mb-4">
+                    <ul class="text-red-600 text-sm">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
 @extends('layouts.app')
 
             @section('content')
@@ -59,13 +68,6 @@
                                             </span>
                                         </div>
                                         <div class="relative">
-                                            <input type="text" name=" comision" placeholder=" Comisión" class="w-full pl-10 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" required value="{{ old('comision') }}">
-                                          
-                                            <span class="absolute left-3 top-2.5 text-gray-400">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2a2 2 0 012-2h2a2 2 0 012 2v2m-6 0h6" /></svg>
-                                            </span>
-                                        </div>
-                                        <div class="relative">
                                             <input type="text" name="dni" placeholder=" DNI" class="w-full pl-10 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" required value="{{ old('dni') }}">
                                             @error('dni')
                                                 <span class="text-red-600 text-xs">{{ $message }}</span> 
@@ -89,7 +91,7 @@
                                             </span>
                                         </div>
                                         <div>
-                                            <select name="curso_id" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" required>
+                                            <select name="course_id" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" required>
                                                 <option value="">Selecciona tu Curso</option>
                                                 @foreach($cursos as $curso)
                                                     <option value="{{ $curso->id }}" {{ old('role_id') == $curso->id ? 'selected' : '' }}>{{ $curso->name }}</option>
@@ -173,4 +175,3 @@
                         </div>
                     </div>
                     @endsection
-                        
