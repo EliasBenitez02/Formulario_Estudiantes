@@ -24,30 +24,14 @@ class LoginController extends Controller
     {
         // Validación del form
         $credentials = $request->validate([
-<<<<<<< HEAD
-            'email' => ['required', 'email'],
-            'password' => ['required'],
-=======
             'email' => 'required|email',
             'password' => 'required',
->>>>>>> develop
         ]);
 
         // Intentar loguear primero como admin
         if (Auth::guard('admin')->attempt($credentials, $request->filled('remember'))) {
             $request->session()->regenerate();
-<<<<<<< HEAD
-
-            $user = Auth::user();
-            $alumnoRoleId = Role::where('name', 'alumno')->value('id');
-            if ($user->role_id === $alumnoRoleId) {
-                return redirect()->route('student.dashboard');
-            }
-            // Otros roles...
-            return redirect()->intended('/');
-=======
             return redirect()->intended('/admin/dashboard');
->>>>>>> develop
         }
 
         // Si no es admin, intentar como user
@@ -65,13 +49,8 @@ class LoginController extends Controller
 
         // Si no coincide en ninguna tabla
         return back()->withErrors([
-<<<<<<< HEAD
-            'email' => 'Las credenciales no son correctas.',
-        ]);
-=======
             'email' => 'Las credenciales no coinciden con nuestros registros.',
         ])->onlyInput('email');
->>>>>>> develop
     }
 
     /**

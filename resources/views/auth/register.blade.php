@@ -89,16 +89,10 @@
                                             </span>
                                         </div>
                                         <div>
-<<<<<<< HEAD
-                                            <select name="role_id" required>
-                                                @foreach($roles as $role)
-                                                    <option value="{{ $role->id }}">{{ $role->name }}</option>
-=======
                                             <select name="curso_id" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" required>
                                                 <option value="">Selecciona tu Curso</option>
                                                 @foreach($cursos as $curso)
                                                     <option value="{{ $curso->id }}" {{ old('role_id') == $curso->id ? 'selected' : '' }}>{{ $curso->name }}</option>
->>>>>>> develop
                                                 @endforeach
                                             </select>
                                         </div>
@@ -179,8 +173,4 @@
                         </div>
                     </div>
                     @endsection
-<<<<<<< HEAD
-
-=======
                         
->>>>>>> develop

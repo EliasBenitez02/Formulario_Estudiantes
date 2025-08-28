@@ -39,15 +39,6 @@ class RegisterController extends Controller
             'whatsapp.unique' => 'Este número de WhatsApp ya existe.',
         ]);
 
-<<<<<<< HEAD
-        // Validación para que solo exista un profesor
-        $profesorRoleId = Role::where('name', 'profesor')->value('id');
-        if ($request->role_id == $profesorRoleId) {
-            if (User::where('role_id', $request->role_id)->exists()) {
-                return back()->with('alert', 'Ya existe un usuario con rol Profesor.');
-            }
-        }
-=======
 $profesorRoleId = Role::where('name', 'Profesor')->first()?->id;
 
 $profesorExistente = User::where('role_id', $profesorRoleId)
@@ -60,7 +51,6 @@ if ($profesorExistente) {
     ])->withInput();
 }
 
->>>>>>> develop
 
 
         $photoPath = null;
