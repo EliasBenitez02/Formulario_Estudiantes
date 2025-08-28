@@ -6,15 +6,12 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Livewire\Student\StudentDashboard;
 
 
-<<<<<<< HEAD
-=======
 // --------------------
 // Página principal redirige al login
 // --------------------
 Route::get('/', function () {
     return redirect()->route('login');
 });
->>>>>>> develop
 
 // --------------------
 // Autenticación
@@ -33,16 +30,8 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 // Dashboard del Profesor con Livewire
 // --------------------
 Route::middleware(['auth'])->group(function () {
-<<<<<<< HEAD
-    Route::get('/alumno/dashboard', StudentDashboard::class)->name('student.dashboard');
-});
-
-Route::get('/', function () {
-    return redirect()->route('login');
-=======
     Route::get('/profesor/dashboard', \App\Livewire\ProfesorDashboard::class)
         ->name('profesor.dashboard');
->>>>>>> develop
 });
 
 // --------------------
