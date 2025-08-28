@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Role;
 use App\Models\SocialProfile;
+use App\Models\Course;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
@@ -13,27 +14,32 @@ use Illuminate\Support\Facades\DB;
 
 class RegisterController extends Controller
 {
-    public function showRegistrationForm()
-    {
-        $roles = Role::all();
-        return view('auth.register', compact('roles'));
-    }
+   public function showRegistrationForm()
+{
+    $cursos = Course::all();
+    return view('auth.register', compact('cursos'));
+}
 
     public function register(Request $request)
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|confirmed|min:6',
-            'whatsapp' => 'required|string',
+            'email' => 'required|string|email|max:255|unique:users,email',
+           'password' => [ 'required', 'string','confirmed', 'min:6',],
+            'whatsapp' => 'required|string|unique:users,whatsapp',
             'comision' => 'required|string',
-            'dni' => 'required|string|unique:users',
+            'dni' => 'required|string|unique:users,dni',
             'carrera' => 'required|string',
             'fecha_nacimiento' => 'required|date',
-            'role_id' => 'required|exists:roles,id',
-            'profile_photo' => 'nullable|image|max:2048',
+            'course_id' => 'required|exists:courses,id',
+            'profile_photo' => 'required|image|max:5048',
+        ], [
+            'email.unique' => 'Este correo ya existe.',
+            'dni.unique' => 'Este DNI ya existe.',
+            'whatsapp.unique' => 'Este número de WhatsApp ya existe.',
         ]);
 
+<<<<<<< HEAD
         // Validación para que solo exista un profesor
         $profesorRoleId = Role::where('name', 'profesor')->value('id');
         if ($request->role_id == $profesorRoleId) {
@@ -41,6 +47,21 @@ class RegisterController extends Controller
                 return back()->with('alert', 'Ya existe un usuario con rol Profesor.');
             }
         }
+=======
+$profesorRoleId = Role::where('name', 'Profesor')->first()?->id;
+
+$profesorExistente = User::where('role_id', $profesorRoleId)
+                         ->where('course_id', $request->course_id)
+                         ->exists();
+
+if ($profesorExistente) {
+    return back()->withErrors([
+        'course_id' => 'Este curso ya tiene un profesor asignado.'
+    ])->withInput();
+}
+
+>>>>>>> develop
+
 
         $photoPath = null;
         if ($request->hasFile('profile_photo')) {
@@ -59,7 +80,8 @@ class RegisterController extends Controller
                 'dni' => $request->dni,
                 'carrera' => $request->carrera,
                 'fecha_nacimiento' => $request->fecha_nacimiento,
-                'role_id' => $request->role_id,
+                'course_id'=>$request->course_id,
+                'role_id' => 3,
             ]);
 
             SocialProfile::create([

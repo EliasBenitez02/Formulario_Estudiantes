@@ -1,16 +1,16 @@
 <?php
-
 namespace App\Livewire\Student;
-
 use Livewire\Component;
 use Livewire\Attributes\Layout; 
 use Livewire\WithPagination;
 use Livewire\WithFileUploads;
 use App\Models\User;
+use App\Models\SocialProfile;
 use App\Models\Role;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Auth;
 
+#[Layout('layouts.app')]
 class StudentDashboard extends Component
 {
     use WithPagination, WithFileUploads;

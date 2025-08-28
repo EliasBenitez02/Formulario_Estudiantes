@@ -20,10 +20,11 @@ return new class extends Migration
             $table->string('profile_photo')->nullable();
             $table->string('whatsapp')->nullable();
             $table->string('comision')->nullable();
-            $table->string('dni')->unique();
+            $table->string('dni')->nullable();
             $table->string('carrera')->nullable();
             $table->date('fecha_nacimiento')->nullable();
             $table->foreignId('role_id')->constrained('roles');
+            $table->foreignId('course_id')->nullable()->constrained('courses')->nullOnDelete();
             $table->rememberToken();
             $table->timestamps();
         });
