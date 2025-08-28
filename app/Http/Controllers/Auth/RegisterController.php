@@ -79,11 +79,11 @@ class RegisterController extends Controller
 
             SocialProfile::create([
                 'user_id' => $user->id,
-                'linkedin' => $request->linkedin,
-                'github' => $request->github,
-                'gitlab' => $request->gitlab,
-                'wordpress' => $request->wordpress,
-                'notion' => $request->notion,
+                'linkedin' => $request->linkedin ?? null,
+                'github' => $request->github ?? null,
+                'gitlab' => $request->gitlab ?? null,
+                'wordpress' => $request->wordpress ?? null,
+                'notion' => $request->notion ?? null,
             ]);
 
             DB::commit();

@@ -1,10 +1,10 @@
 <?php
 
+
 use Illuminate\Support\Facades\Route;
-
-
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Livewire\Profesor\Dashboard;
 
 Route::get('/', function () {
     return view('welcome');
@@ -18,3 +18,8 @@ Route::post('/register', [RegisterController::class, 'register']);
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login']);
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+
+// Dashboard del Profesor 
+
+    Route::get('/profesor/dashboard', \App\Livewire\Profesor\Dashboard::class)
+        ->name('profesor.dashboard');
