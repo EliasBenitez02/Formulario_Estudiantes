@@ -35,12 +35,12 @@ class RegisterController extends Controller
         ]);
 
         // Validación para que solo exista un profesor
-if ($request->role_id == Role::where('name', 'Profesor')->first()->id) {
-    if (User::where('role_id', $request->role_id)->exists()) {
-        return back()->with('alert', 'Ya existe un usuario con rol Profesor.');
-    }
-}
-
+        $profesorRoleId = Role::where('name', 'profesor')->value('id');
+        if ($request->role_id == $profesorRoleId) {
+            if (User::where('role_id', $request->role_id)->exists()) {
+                return back()->with('alert', 'Ya existe un usuario con rol Profesor.');
+            }
+        }
 
         $photoPath = null;
         if ($request->hasFile('profile_photo')) {
@@ -64,18 +64,21 @@ if ($request->role_id == Role::where('name', 'Profesor')->first()->id) {
 
             SocialProfile::create([
                 'user_id' => $user->id,
-                'linkedin' => $request->linkedin,
-                'github' => $request->github,
-                'gitlab' => $request->gitlab,
-                'wordpress' => $request->wordpress,
-                'notion' => $request->notion,
+                'linkedin' => $request->linkedin ?? null,
+                'github' => $request->github ?? null,
+                'gitlab' => $request->gitlab ?? null,
+                'wordpress' => $request->wordpress ?? null,
+                'notion' => $request->notion ?? null,
             ]);
 
             DB::commit();
+            // Si quieres loguear automáticamente al usuario tras el registro:
+            // Auth::login($user);
+
             return redirect()->route('login')->with('success', 'Registro exitoso.');
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->withErrors(['error' => 'Error en el registro.'])->withInput();
+            return back()->withErrors(['error' => 'Error en el registro: ' . $e->getMessage()])->withInput();
         }
     }
 }

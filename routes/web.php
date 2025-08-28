@@ -1,14 +1,11 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
-
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Livewire\Student\StudentDashboard;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+
 
 // Registro
 Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
@@ -21,7 +18,9 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 // Dashboard del alumno (Livewire)
 Route::middleware(['auth'])->group(function () {
-    Route::get('/alumno/dashboard', function () {
-        return view('alumno.dashboard');
-    })->name('alumno.dashboard');
+    Route::get('/alumno/dashboard', StudentDashboard::class)->name('student.dashboard');
+});
+
+Route::get('/', function () {
+    return redirect()->route('login');
 });

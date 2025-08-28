@@ -3,24 +3,31 @@
 namespace App\Livewire\Student;
 
 use Livewire\Component;
+use Livewire\Attributes\Layout; 
 use Livewire\WithPagination;
 use Livewire\WithFileUploads;
 use App\Models\User;
 use App\Models\Role;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Auth;
 
 class StudentDashboard extends Component
 {
     use WithPagination, WithFileUploads;
 
     // props del perfil
-    public User $alumno;
+    public ?User $alumno = null;
     public bool $editando = false;
     public string $nombre = '';
     public string $email = '';
     public ?string $whatsapp = null;
     public ?string $comision = null;
     public ?string $carrera  = null;
+    public ?string $linkedin = null;
+public ?string $github   = null;
+public ?string $gitlab   = null;
+public ?string $wordpress = null;
+public ?string $notion    = null;
 
     // props de la grilla de profesores
     public string $q = '';
@@ -30,11 +37,11 @@ class StudentDashboard extends Component
 
     protected $queryString = ['q'];
 
-    public function mount()
-    {
-        $this->alumno = auth()->user();
+   public function mount()
+{
+    $this->alumno = Auth::user();
 
-        // Llenamos las propiedades desde el modelo
+    if ($this->alumno) {
         $this->fill([
             'nombre'   => $this->alumno->name ?? '',
             'email'    => $this->alumno->email ?? '',
@@ -42,7 +49,19 @@ class StudentDashboard extends Component
             'comision' => $this->alumno->comision,
             'carrera'  => $this->alumno->carrera,
         ]);
+
+        // Cargar redes sociales si existen
+        $sp = $this->alumno->socialProfiles()->first(); // o ->socialProfile si es hasOne
+        if ($sp) {
+            $this->linkedin  = $sp->linkedin;
+            $this->github    = $sp->github;
+            $this->gitlab    = $sp->gitlab;
+            $this->wordpress = $sp->wordpress;
+            $this->notion    = $sp->notion;
+        }
     }
+}
+
 
     public function updatingQ() { $this->resetPage(); }
 
@@ -55,40 +74,68 @@ class StudentDashboard extends Component
         $this->editando = false;
     }
 
-    public function actualizarDatos()
-    {
-        $this->validate([
-            'nombre'   => ['required','string','max:255'],
-            'email'    => ['required','email','max:255', Rule::unique('users','email')->ignore($this->alumno->id)],
-            'whatsapp' => ['nullable','string','max:50'],
-            'comision' => ['nullable','string','max:50'],
-            'carrera'  => ['nullable','string','max:100'],
+public function actualizarDatos()
+{
+    $this->validate([
+        'nombre'   => ['required','string','max:255'],
+        'email'    => ['required','email','max:255', Rule::unique('users','email')->ignore($this->alumno->id)],
+        'whatsapp' => ['nullable','string','max:50'],
+        'comision' => ['nullable','string','max:50'],
+        'carrera'  => ['nullable','string','max:100'],
+
+        // redes
+        'linkedin'  => ['nullable','url','max:255'],
+        'github'    => ['nullable','url','max:255'],
+        'gitlab'    => ['nullable','url','max:255'],
+        'wordpress' => ['nullable','url','max:255'],
+        'notion'    => ['nullable','url','max:255'],
+    ]);
+
+    // Usuario
+    $this->alumno->update([
+        'name'      => $this->nombre,
+        'email'     => $this->email,
+        'whatsapp'  => $this->whatsapp,
+        'comision'  => $this->comision,
+        'carrera'   => $this->carrera,
+    ]);
+
+    // Upsert redes (funciona si tu relación es hasOne o hasMany (tomando first))
+    $sp = $this->alumno->socialProfiles()->first();
+    if (!$sp) {
+        // si no existe, crear
+        $sp = $this->alumno->socialProfiles()->create([
+            'linkedin'  => $this->linkedin,
+            'github'    => $this->github,
+            'gitlab'    => $this->gitlab,
+            'wordpress' => $this->wordpress,
+            'notion'    => $this->notion,
         ]);
-
-        // Guardamos en BD
-        $this->alumno->update([
-            'name'      => $this->nombre,
-            'email'     => $this->email,
-            'whatsapp'  => $this->whatsapp,
-            'comision'  => $this->comision,
-            'carrera'   => $this->carrera,
+    } else {
+        // si existe, actualizar
+        $sp->update([
+            'linkedin'  => $this->linkedin,
+            'github'    => $this->github,
+            'gitlab'    => $this->gitlab,
+            'wordpress' => $this->wordpress,
+            'notion'    => $this->notion,
         ]);
-
-        // MUY IMPORTANTE: sincronizar modelo y props para que la UI cambie sin refrescar
-        $this->alumno->refresh();
-
-        // Re-llenamos props por si hay casts/mutators/normalizaciones
-        $this->fill([
-            'nombre'   => $this->alumno->name,
-            'email'    => $this->alumno->email,
-            'whatsapp' => $this->alumno->whatsapp,
-            'comision' => $this->alumno->comision,
-            'carrera'  => $this->alumno->carrera,
-        ]);
-
-        $this->editando = false;
-        session()->flash('mensaje', 'Datos actualizados correctamente.');
     }
+
+    // refrescar y re-llenar props (para que la UI vea los cambios)
+    $this->alumno->refresh();
+    $this->fill([
+        'nombre'   => $this->alumno->name,
+        'email'    => $this->alumno->email,
+        'whatsapp' => $this->alumno->whatsapp,
+        'comision' => $this->alumno->comision,
+        'carrera'  => $this->alumno->carrera,
+    ]);
+
+    $this->editando = false;
+    session()->flash('mensaje', 'Datos actualizados correctamente.');
+}
+
 
     public function actualizarFoto()
     {
@@ -105,6 +152,7 @@ class StudentDashboard extends Component
         }
     }
 
+    #[Layout('layouts.alumno')]
     public function render()
     {
         $profRoleId = Role::where('name','profesor')->value('id');
@@ -123,5 +171,6 @@ class StudentDashboard extends Component
             ->paginate($this->perPage);
 
         return view('livewire.student.student-dashboard', compact('profesores'));
+        
     }
 }

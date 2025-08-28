@@ -73,8 +73,7 @@
                                             </span>
                                         </div>
                                         <div>
-                                            <select name="role_id" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" required>
-                                                <option value="">Selecciona tu rol</option>
+                                            <select name="role_id" required>
                                                 @foreach($roles as $role)
                                                     <option value="{{ $role->id }}">{{ $role->name }}</option>
                                                 @endforeach
@@ -135,4 +134,4 @@
                         </div>
                     </div>
                     @endsection
-                        
+

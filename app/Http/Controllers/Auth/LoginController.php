@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Role;
 
 class LoginController extends Controller
 {
@@ -16,7 +17,7 @@ class LoginController extends Controller
     public function login(Request $request)
     {
         $credentials = $request->validate([
-            'email'    => ['required', 'email'],
+            'email' => ['required', 'email'],
             'password' => ['required'],
         ]);
 
@@ -24,23 +25,17 @@ class LoginController extends Controller
             $request->session()->regenerate();
 
             $user = Auth::user();
-
-            // Redirección por rol
-            if ($user->role && $user->role->name === 'alumno') {
-                return redirect()->route('alumno.dashboard');
+            $alumnoRoleId = Role::where('name', 'alumno')->value('id');
+            if ($user->role_id === $alumnoRoleId) {
+                return redirect()->route('student.dashboard');
             }
-
-            if ($user->role && $user->role->name === 'profesor') {
-                return redirect()->route('profesor.dashboard'); // definila cuando la uses
-            }
-
-            // Fallback si no hay rol o no coincide
-            return redirect('/');
+            // Otros roles...
+            return redirect()->intended('/');
         }
 
         return back()->withErrors([
-            'email' => 'Las credenciales no son válidas.',
-        ])->onlyInput('email');
+            'email' => 'Las credenciales no son correctas.',
+        ]);
     }
 
     public function logout(Request $request)
