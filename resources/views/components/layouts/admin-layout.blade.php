@@ -11,8 +11,8 @@
     <nav class="bg-blue-700 text-white px-6 py-4 flex justify-between items-center shadow">
         <span class="font-bold text-xl">Admin Panel</span>
         <div>
-            <a href="#" class="mr-4 hover:underline">Profesores</a>
-            <a href="#" class="mr-4 hover:underline">Cursos</a>
+            <a href="{{ route('admin.profesores.create') }}" class="mr-4 hover:underline">Agregar Profesor</a>
+            <a href="{{ route('admin.cursos.create') }}" class="mr-4 hover:underline">Agregar Curso</a>
             <form method="POST" action="{{ route('logout') }}" style="display:inline">
                 @csrf
                 <button type="submit" class="hover:underline bg-transparent border-none text-white cursor-pointer">Cerrar sesión</button>

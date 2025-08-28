@@ -25,9 +25,8 @@ class RegisterController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email',
-           'password' => [ 'required', 'string','confirmed', 'min:6',],
+            'password' => [ 'required', 'string','confirmed', 'min:6',],
             'whatsapp' => 'required|string|unique:users,whatsapp',
-            'comision' => 'required|string',
             'dni' => 'required|string|unique:users,dni',
             'carrera' => 'required|string',
             'fecha_nacimiento' => 'required|date',
@@ -39,17 +38,7 @@ class RegisterController extends Controller
             'whatsapp.unique' => 'Este número de WhatsApp ya existe.',
         ]);
 
-$profesorRoleId = Role::where('name', 'Profesor')->first()?->id;
 
-$profesorExistente = User::where('role_id', $profesorRoleId)
-                         ->where('course_id', $request->course_id)
-                         ->exists();
-
-if ($profesorExistente) {
-    return back()->withErrors([
-        'course_id' => 'Este curso ya tiene un profesor asignado.'
-    ])->withInput();
-}
 
 
 

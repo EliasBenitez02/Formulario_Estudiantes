@@ -5,6 +5,7 @@ use Livewire\Component;
     use App\Models\Course;
 
     class AdminDashboard extends Component
+  
     {
         public $showProfesorModal = false;
         public $showCursoModal = false;
