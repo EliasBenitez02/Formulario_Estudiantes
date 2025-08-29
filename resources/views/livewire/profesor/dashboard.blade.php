@@ -40,23 +40,31 @@
     <div class="bg-white rounded-xl shadow p-6">
         <h2 class="text-2xl font-bold mb-4">Lista de Alumnos</h2>
         @if(session()->has('mensaje'))
-            <div class="mb-4 p-3 bg-green-100 text-green-700 rounded">
-                {{ session('mensaje') }}
-            </div>
+        <div class="mb-4 p-3 bg-green-100 text-green-700 rounded">
+            {{ session('mensaje') }}
+        </div>
         @endif
 
         <div class="mb-4 relative">
-            <input type="text" wire:model="q" placeholder="Buscar por nombre, email..." class="w-full border rounded-lg p-2 focus:ring focus:ring-blue-300" />
-            @if(strlen($q) >= 4 && count($sugerencias) > 0)
-                <ul class="absolute z-10 bg-white shadow-md rounded mt-1 w-full">
-                    @foreach($sugerencias as $sug)
-                        <li wire:click="verAlumno({{ $sug->id }})" class="p-2 cursor-pointer hover:bg-gray-100">
-                            {{ $sug->name }} ({{ $sug->email }})
-                        </li>
-                    @endforeach
-                </ul>
+            <input
+                type="text"
+                wire:model.debounce.400ms="q" {{-- debounce = menos consultas --}}
+                placeholder="Buscar por nombre o email..."
+                class="w-full border rounded-lg p-2 focus:ring focus:ring-blue-300" />
+
+            @if(strlen($q) >= 4 && $sugerencias->isNotEmpty())
+            <ul class="absolute z-10 bg-white shadow-md rounded mt-1 w-full max-h-64 overflow-auto">
+                @foreach($sugerencias as $sug)
+                <li wire:click="verAlumno({{ $sug->id }})"
+                    wire:key="sug-{{ $sug->id }}"
+                    class="p-2 cursor-pointer hover:bg-gray-100">
+                    {{ $sug->name }} ({{ $sug->email }})
+                </li>
+                @endforeach
+            </ul>
             @endif
         </div>
+
 
         <div class="overflow-x-auto">
             <table class="w-full border-collapse">
@@ -81,11 +89,11 @@
                         <td class="p-3">{{ $alumno->email }}</td>
                         <td class="p-3 flex gap-2">
                             @if($alumno->whatsapp)
-                                <a href="https://wa.me/{{ $alumno->whatsapp }}" target="_blank" title="WhatsApp">
-                                    <svg class="w-6 h-6 text-green-500 hover:text-green-700" fill="currentColor" viewBox="0 0 24 24">
-                                        <path d="M20.52 3.48A12 12 0 003.48 20.52a12 12 0 0017.04-17.04zm-8.52 18.52a10.5 10.5 0 01-5.62-1.62l-.4-.24-4.13 1.08 1.1-4.03-.26-.42A10.5 10.5 0 1112 22.01zm5.2-7.2c-.28-.14-1.65-.81-1.9-.9-.25-.09-.43-.14-.61.14-.18.28-.7.9-.86 1.08-.16.18-.32.2-.6.07-.28-.13-1.18-.44-2.25-1.4-.83-.74-1.39-1.65-1.55-1.93-.16-.28-.02-.43.12-.57.13-.13.28-.34.42-.51.14-.17.18-.29.27-.48.09-.19.05-.36-.02-.5-.07-.14-.61-1.47-.84-2.01-.22-.53-.45-.46-.61-.47-.16-.01-.36-.01-.56-.01-.19 0-.5.07-.76.34-.26.27-1 1-1 2.43s1.03 2.82 1.18 3.02c.15.2 2.03 3.18 5.01 4.34.7.27 1.25.43 1.68.55.71.19 1.36.16 1.87.1.57-.07 1.65-.67 1.89-1.32.24-.65.24-1.21.17-1.32z" />
-                                    </svg>
-                                </a>
+                            <a href="https://wa.me/{{ $alumno->whatsapp }}" target="_blank" title="WhatsApp">
+                                <svg class="w-6 h-6 text-green-500 hover:text-green-700" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M20.52 3.48A12 12 0 003.48 20.52a12 12 0 0017.04-17.04zm-8.52 18.52a10.5 10.5 0 01-5.62-1.62l-.4-.24-4.13 1.08 1.1-4.03-.26-.42A10.5 10.5 0 1112 22.01zm5.2-7.2c-.28-.14-1.65-.81-1.9-.9-.25-.09-.43-.14-.61.14-.18.28-.7.9-.86 1.08-.16.18-.32.2-.6.07-.28-.13-1.18-.44-2.25-1.4-.83-.74-1.39-1.65-1.55-1.93-.16-.28-.02-.43.12-.57.13-.13.28-.34.42-.51.14-.17.18-.29.27-.48.09-.19.05-.36-.02-.5-.07-.14-.61-1.47-.84-2.01-.22-.53-.45-.46-.61-.47-.16-.01-.36-.01-.56-.01-.19 0-.5.07-.76.34-.26.27-1 1-1 2.43s1.03 2.82 1.18 3.02c.15.2 2.03 3.18 5.01 4.34.7.27 1.25.43 1.68.55.71.19 1.36.16 1.87.1.57-.07 1.65-.67 1.89-1.32.24-.65.24-1.21.17-1.32z" />
+                                </svg>
+                            </a>
                             @endif
                         </td>
                         <td class="p-3 flex gap-2">
@@ -148,49 +156,49 @@
 
     {{-- Modal Editar Perfil --}}
     @if($mostrarEditarPerfil)
-        <div class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-            <div class="bg-white p-6 rounded-xl shadow-lg w-full max-w-md">
-                <h2 class="text-xl font-bold mb-4">Editar Perfil</h2>
-                <form wire:submit.prevent="guardarPerfil">
-                    <div class="mb-2">
-                        <label class="block font-bold">Nombre</label>
-                        <input type="text" wire:model.defer="profesorEdit.name" class="w-full border rounded p-2">
-                    </div>
-                    <div class="mb-2">
-                        <label class="block font-bold">Email</label>
-                        <input type="email" wire:model.defer="profesorEdit.email" class="w-full border rounded p-2">
-                    </div>
-                    <div class="mb-2">
-                        <label class="block font-bold">DNI</label>
-                        <input type="text" wire:model.defer="profesorEdit.dni" class="w-full border rounded p-2">
-                    </div>
-                    <div class="mb-2">
-                        <label class="block font-bold">WhatsApp</label>
-                        <input type="text" wire:model.defer="profesorEdit.whatsapp" class="w-full border rounded p-2">
-                    </div>
-                    <div class="mb-2">
-                        <label class="block font-bold">Fecha de Nacimiento</label>
-                        <input type="date" wire:model.defer="profesorEdit.fecha_nacimiento" class="w-full border rounded p-2">
-                    </div>
-                    <div class="mb-2">
-                        <label class="block font-bold">Comisión</label>
-                        <input type="text" wire:model.defer="profesorEdit.comision" class="w-full border rounded p-2">
-                    </div>
-                    <div class="mb-2">
-                        <label class="block font-bold">Carrera</label>
-                        <input type="text" wire:model.defer="profesorEdit.carrera" class="w-full border rounded p-2">
-                    </div>
-                    <div class="mb-2">
-                        <label class="block font-bold">Foto de Perfil</label>
-                        <input type="file" wire:model="fotoPerfilProfesor" class="w-full">
-                    </div>
-                    <div class="flex gap-2 mt-4">
-                        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Guardar</button>
-                        <button type="button" wire:click="cerrarModales" class="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400">Cancelar</button>
-                    </div>
-                </form>
-            </div>
+    <div class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+        <div class="bg-white p-6 rounded-xl shadow-lg w-full max-w-md">
+            <h2 class="text-xl font-bold mb-4">Editar Perfil</h2>
+            <form wire:submit.prevent="guardarPerfil">
+                <div class="mb-2">
+                    <label class="block font-bold">Nombre</label>
+                    <input type="text" wire:model.defer="profesorEdit.name" class="w-full border rounded p-2">
+                </div>
+                <div class="mb-2">
+                    <label class="block font-bold">Email</label>
+                    <input type="email" wire:model.defer="profesorEdit.email" class="w-full border rounded p-2">
+                </div>
+                <div class="mb-2">
+                    <label class="block font-bold">DNI</label>
+                    <input type="text" wire:model.defer="profesorEdit.dni" class="w-full border rounded p-2">
+                </div>
+                <div class="mb-2">
+                    <label class="block font-bold">WhatsApp</label>
+                    <input type="text" wire:model.defer="profesorEdit.whatsapp" class="w-full border rounded p-2">
+                </div>
+                <div class="mb-2">
+                    <label class="block font-bold">Fecha de Nacimiento</label>
+                    <input type="date" wire:model.defer="profesorEdit.fecha_nacimiento" class="w-full border rounded p-2">
+                </div>
+                <div class="mb-2">
+                    <label class="block font-bold">Comisión</label>
+                    <input type="text" wire:model.defer="profesorEdit.comision" class="w-full border rounded p-2">
+                </div>
+                <div class="mb-2">
+                    <label class="block font-bold">Carrera</label>
+                    <input type="text" wire:model.defer="profesorEdit.carrera" class="w-full border rounded p-2">
+                </div>
+                <div class="mb-2">
+                    <label class="block font-bold">Foto de Perfil</label>
+                    <input type="file" wire:model="fotoPerfilProfesor" class="w-full">
+                </div>
+                <div class="flex gap-2 mt-4">
+                    <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Guardar</button>
+                    <button type="button" wire:click="cerrarModales" class="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400">Cancelar</button>
+                </div>
+            </form>
         </div>
+    </div>
     @endif
 
     {{-- Modal Acerca de --}}
@@ -216,8 +224,8 @@
 
     {{-- Modal Foto Perfil Grande --}}
     @if($fotoPerfilGrande)
-        <div class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50" wire:click="cerrarFotoPerfil">
-            <img src="{{ $fotoPerfilGrande }}" class="max-w-lg max-h-[80vh] rounded-xl shadow-2xl border-4 border-white">
-        </div>
+    <div class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50" wire:click="cerrarFotoPerfil">
+        <img src="{{ $fotoPerfilGrande }}" class="max-w-lg max-h-[80vh] rounded-xl shadow-2xl border-4 border-white">
+    </div>
     @endif
 </div>

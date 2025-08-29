@@ -72,8 +72,9 @@ class Dashboard extends Component
             $this->validate([
                 'fotoPerfilProfesor' => 'image|max:2048',
             ]);
-            $path = $this->fotoPerfilProfesor->store('profile-photos', 'public');
+            $path = $this->fotoPerfilProfesor->store('profile_photos', 'public');
             $user->profile_photo = '/storage/' . $path;
+ 
         }
         $user->save();
         $this->mostrarEditarPerfil = false;
@@ -113,6 +114,7 @@ class Dashboard extends Component
         $this->mostrarAcercaDe = false;
     }
 
+    #Layouts[('layouts.app')]
     public function render()
     {
         if (!auth::user() || auth::user()->role_id != 1) {
@@ -136,6 +138,6 @@ class Dashboard extends Component
         return view('livewire.profesor.dashboard', [
             'alumnos' => $alumnos,
             'sugerencias' => $sugerencias
-        ])->layout('layouts.app');
+        ])->layout('layouts.content');
     }
 }

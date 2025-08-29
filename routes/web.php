@@ -6,9 +6,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Livewire\Profesor\Dashboard;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+
 
 // Registro
 Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
