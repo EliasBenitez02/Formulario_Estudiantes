@@ -1,8 +1,12 @@
+<<<<<<< HEAD
 {{-- resources/views/layouts/app.blade.php --}}
+=======
+>>>>>>> feature/dashboar-profesor
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+<<<<<<< HEAD
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Perfil')</title>
 
@@ -32,6 +36,16 @@
       crossorigin="anonymous"></script>
 
     {{-- Livewire scripts --}}
+=======
+    <title>SICEP - Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    @livewireStyles
+</head>
+<body>
+    <div class="container mx-auto">
+        @yield('content')
+    </div>
+>>>>>>> feature/dashboar-profesor
     @livewireScripts
 </body>
 </html>
