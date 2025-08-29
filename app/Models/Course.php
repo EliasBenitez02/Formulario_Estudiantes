@@ -14,4 +14,7 @@ class Course extends Model
     {
         return $this->hasMany(User::class, 'course_id')->where('role_id', 3); // 3 = alumno
     }
+    public function profesor() {
+        return $this->belongsTo(User::class, 'profesor_id');
+    }
 }

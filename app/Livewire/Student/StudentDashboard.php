@@ -10,7 +10,7 @@ use App\Models\Role;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Auth;
 
-#[Layout('layouts.app')]
+
 class StudentDashboard extends Component
 {
     use WithPagination, WithFileUploads;
