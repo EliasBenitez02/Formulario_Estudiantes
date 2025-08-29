@@ -1,12 +1,5 @@
-@extends('layouts.app')     
+@extends('layouts.app')
 
 @section('content')
-
-@livewire('profesor.profesor-content')
-{{-- @livewire('profesor.profesor-content') --}}
-
+    {{ $slot }}
 @endsection
-
-
-
-    
