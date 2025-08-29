@@ -117,7 +117,7 @@ class Dashboard extends Component
     #Layouts[('layouts.app')]
     public function render()
     {
-        if (!auth::user() || auth::user()->role_id != 1) {
+        if (!auth::user() || auth::user()->role_id != 2) {
             abort(403, 'No tienes permiso para acceder a este módulo.');
         }
         $alumnos = User::where('role_id', 2)
