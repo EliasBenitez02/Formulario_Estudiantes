@@ -4,7 +4,8 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\LoginController;
-use App\Livewire\Profesor\Dashboard;
+use App\Livewire\Student\StudentDashboard;
+
 
 // --------------------
 // Página principal redirige al login

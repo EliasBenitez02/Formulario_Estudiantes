@@ -73,10 +73,13 @@ class RegisterController extends Controller
             ]);
 
             DB::commit();
+            // Si quieres loguear automáticamente al usuario tras el registro:
+            // Auth::login($user);
+
             return redirect()->route('login')->with('success', 'Registro exitoso.');
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->withErrors(['error' => 'Error en el registro.'])->withInput();
+            return back()->withErrors(['error' => 'Error en el registro: ' . $e->getMessage()])->withInput();
         }
     }
 }
