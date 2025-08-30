@@ -4,8 +4,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\LoginController;
-use App\Livewire\Student\StudentDashboard;
-
+use App\Livewire\Profesor\Dashboard;
 
 // --------------------
 // Página principal redirige al login
@@ -31,7 +30,7 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 // Dashboard del Profesor con Livewire
 // --------------------
 Route::middleware(['auth'])->group(function () {
-    Route::get('/profesor/dashboard', \App\Livewire\ProfesorDashboard::class)
+    Route::get('/profesor/dashboard', \App\Livewire\profesor\Dashboard::class)
         ->name('profesor.dashboard');
 });
 
