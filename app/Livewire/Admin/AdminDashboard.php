@@ -86,6 +86,11 @@ use Livewire\Component;
 
         public function eliminarCurso($id)
         {
+            $profesorOcupando = User::where('role_id', 2)->where('course_id', $id)->first();
+            if ($profesorOcupando) {
+                session()->flash('error', 'Este curso está ocupado por un profesor, no se puede eliminar.');
+                return;
+            }
             Course::where('id', $id)->delete();
             session()->flash('mensaje', 'Curso eliminado correctamente.');
         }

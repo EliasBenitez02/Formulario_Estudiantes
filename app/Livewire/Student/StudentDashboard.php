@@ -155,22 +155,14 @@ public function actualizarDatos()
     #[Layout('layouts.alumno')]
     public function render()
     {
-        $profRoleId = Role::where('name','profesor')->value('id');
+        $profesor = User::where('role_id', 2)
+            ->where('course_id', $this->alumno->course_id)
+            ->first();
 
-        $profesores = User::with('socialProfiles')
-            ->where('role_id', $profRoleId)
-            ->when($this->q !== '', function ($q) {
-                $q->where(function ($qq) {
-                    $qq->where('name','like','%'.$this->q.'%')
-                       ->orWhere('email','like','%'.$this->q.'%')
-                       ->orWhere('whatsapp','like','%'.$this->q.'%')
-                       ->orWhere('comision','like','%'.$this->q.'%');
-                });
-            })
-            ->orderBy('name')
-            ->paginate($this->perPage);
-
-        return view('livewire.student.student-dashboard', compact('profesores'));
+        return view('livewire.student.student-dashboard', [
+            'alumno' => $this->alumno,
+            'profesor' => $profesor,
+        ]);
         
     }
 }

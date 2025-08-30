@@ -32,11 +32,7 @@
                     <td class="px-4 py-2">{{ $profesor->name }}</td>
                     <td class="px-4 py-2">{{ $profesor->email }}</td>
                     <td class="px-4 py-2">
-                        <form method="POST" action="{{ route('admin.delete.profesor', $profesor->id) }}">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-danger btn-sm bg-red-600 text-white px-3 py-1 rounded">Eliminar</button>
-                        </form>
+                        <button type="button" onclick="if(confirm('¿Seguro que quieres eliminar {{ $profesor->name }}?')) { window.livewire.emit('eliminarProfesor', {{ $profesor->id }}); }" class="btn btn-danger btn-sm bg-red-600 text-white px-3 py-1 rounded">Eliminar</button>
                     </td>
                 </tr>
             @endforeach
@@ -58,11 +54,7 @@
                     <td class="px-4 py-2">{{ $curso->name }}</td>
                     <td class="px-4 py-2">{{ $curso->description }}</td>
                     <td class="px-4 py-2">
-                        <form method="POST" action="{{ route('admin.delete.curso', $curso->id) }}">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-danger btn-sm bg-red-600 text-white px-3 py-1 rounded">Eliminar</button>
-                        </form>
+                        <button type="button" onclick="window.livewire.emit('eliminarCurso', {{ $curso->id }});" class="btn btn-danger btn-sm bg-red-600 text-white px-3 py-1 rounded">Eliminar</button>
                     </td>
                 </tr>
             @endforeach

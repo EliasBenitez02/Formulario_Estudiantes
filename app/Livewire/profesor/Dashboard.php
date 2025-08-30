@@ -60,21 +60,20 @@ class Dashboard extends Component
     public function guardarPerfil()
     {
         $user = auth::user();
-        $user->name = $this->profesorEdit['name'];
-        $user->email = $this->profesorEdit['email'];
-        $user->dni = $this->profesorEdit['dni'];
-        $user->whatsapp = $this->profesorEdit['whatsapp'];
-        $user->fecha_nacimiento = $this->profesorEdit['fecha_nacimiento'];
-        $user->comision = $this->profesorEdit['comision'];
-        $user->carrera = $this->profesorEdit['carrera'];
+    $user->name = $this->profesorEdit['name'];
+    $user->email = $this->profesorEdit['email'];
+    $user->dni = $this->profesorEdit['dni'];
+    $user->whatsapp = $this->profesorEdit['whatsapp'];
+    $user->fecha_nacimiento = $this->profesorEdit['fecha_nacimiento'] ?: null;
+    $user->comision = $this->profesorEdit['comision'];
+    $user->carrera = $this->profesorEdit['carrera'];
 
         if ($this->fotoPerfilProfesor) {
             $this->validate([
                 'fotoPerfilProfesor' => 'image|max:2048',
             ]);
             $path = $this->fotoPerfilProfesor->store('profile_photos', 'public');
-            $user->profile_photo = '/storage/' . $path;
- 
+            $user->profile_photo = $path; // solo 'profile_photos/archivo.jpg'
         }
         $user->save();
         $this->mostrarEditarPerfil = false;
@@ -120,22 +119,26 @@ class Dashboard extends Component
         if (!auth::user() || auth::user()->role_id != 2) {
             abort(403, 'No tienes permiso para acceder a este módulo.');
         }
-        $alumnos = User::where('role_id', 2)
+        $profesor = auth::user();
+        $cursoId = $profesor->course_id;
+        $alumnos = User::where('role_id', 3)
+            ->where('course_id', $cursoId)
             ->where(function ($query) {
                 $query->where('name', 'like', "%{$this->q}%")
                     ->orWhere('email', 'like', "%{$this->q}%");
             })
-            ->paginate(5);
+            ->paginate(8);
 
         $sugerencias = [];
-        if (strlen($this->q) >= 4) {
-            $sugerencias = User::where('role_id', 2)
+        if (strlen($this->q) >= 2) {
+            $sugerencias = User::where('role_id', 3)
+                ->where('course_id', $cursoId)
                 ->where('name', 'like', "%{$this->q}%")
                 ->limit(5)
                 ->get();
         }
 
-        return view('livewire.profesor.dashboard', [
+          return view('livewire.profesor.dashboard', [
             'alumnos' => $alumnos,
             'sugerencias' => $sugerencias
         ])->layout('layouts.content');
