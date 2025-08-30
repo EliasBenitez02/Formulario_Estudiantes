@@ -109,9 +109,11 @@
               </div>
             </div>
 
-            <div class="space-y-1">
-              <label class="text-[12px] text-slate-500">Comisión</label>
-              <div class="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-800">{{ $comision ?: ($alumno->comision ?? '—') }}</div>
+          <div class="space-y-1">
+              <label class="text-[12px] text-slate-500">Curso</label>
+              <div class="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-800">
+                {{ $alumno->course ? $alumno->course->name : '—' }}
+              </div>
             </div>
 
             <div class="space-y-1">
@@ -123,6 +125,8 @@
               <label class="text-[12px] text-slate-500">Carrera</label>
               <div class="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-800">{{ $carrera ?: ($alumno->carrera ?? '—') }}</div>
             </div>
+
+        
 
             <div class="space-y-1 sm:col-span-2">
               <label class="text-[12px] text-slate-500">Fecha de nacimiento</label>
