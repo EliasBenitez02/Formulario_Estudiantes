@@ -20,10 +20,7 @@ use Livewire\Component;
             'description' => '',
         ];
 
-        public function mount()
-        {
-            // No es necesario aquí, se obtiene en render
-        }
+      
 
         public function showAddProfesorModal()
         {
@@ -67,8 +64,10 @@ use Livewire\Component;
         public function agregarCurso()
         {
             $this->validate([
-                'curso.name' => 'required|string|max:255',
+                'curso.name' => 'required|string|max:255|unique:courses,name',
                 'curso.description' => 'required|string',
+            ], [
+                'curso.name.unique' => 'El nombre del curso ya existe.',
             ]);
             Course::create([
                 'name' => $this->curso['name'],
@@ -76,12 +75,21 @@ use Livewire\Component;
             ]);
             $this->curso = ['name' => '', 'description' => ''];
             $this->hideAddCursoModal();
+    
         }
 
         public function eliminarProfesor($id)
         {
-            User::where('id', $id)->where('role_id', 2)->delete();
-            session()->flash('mensaje', 'Profesor eliminado correctamente.');
+            $profesor = User::where('id', $id)->where('role_id', 2)->first();
+            if ($profesor) {
+                // Desocupa el curso
+                $profesor->course_id = null;
+                $profesor->save();
+                $profesor->delete();
+                session()->flash('mensaje', 'Profesor eliminado correctamente y el curso ha quedado libre.');
+            } else {
+                session()->flash('error', 'No se encontró el profesor.');
+            }
         }
 
         public function eliminarCurso($id)
@@ -91,8 +99,11 @@ use Livewire\Component;
                 session()->flash('error', 'Este curso está ocupado por un profesor, no se puede eliminar.');
                 return;
             }
-            Course::where('id', $id)->delete();
-            session()->flash('mensaje', 'Curso eliminado correctamente.');
+            $curso = Course::find($id);
+            if ($curso) {
+                $curso->delete();
+                session()->flash('mensaje', 'Curso eliminado correctamente.');
+            }
         }
 
         public function render()

@@ -102,13 +102,15 @@ Route::middleware(['auth'])->group(function () {
     })->name('admin.cursos.create');
 
     Route::post('/admin/cursos/agregar', function(\Illuminate\Http\Request $request) {
-        $request->validate([
-            'name' => 'required|string|max:255',
+        $validated = $request->validate([
+            'name' => 'required|string|max:255|unique:courses,name',
             'description' => 'required|string',
+        ], [
+            'name.unique' => 'Este nombre ya existe',
         ]);
         \App\Models\Course::create([
-            'name' => $request->name,
-            'description' => $request->description,
+            'name' => $validated['name'],
+            'description' => $validated['description'],
         ]);
         // Redirigir al dashboard y mostrar mensaje
         return redirect()->route('admin.dashboard')->with('success', 'Curso agregado correctamente.');
