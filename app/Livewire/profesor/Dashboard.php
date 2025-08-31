@@ -6,6 +6,7 @@ use Livewire\Component;
 use Livewire\WithPagination;
 use Livewire\WithFileUploads;
 use App\Models\User;
+use App\Models\SocialProfile;
 use Illuminate\Support\Facades\Auth;
 
 class Dashboard extends Component
@@ -23,45 +24,53 @@ class Dashboard extends Component
     public $fotoPerfilProfesor;
     public ?int $confirmarEliminarId = null;
 
+    /** Flag para ignorar ?ver= cuando el usuario limpia el buscador */
+    public bool $forceIgnoreVer = false;
+
     protected $paginationTheme = 'tailwind';
 
     public function updatedQ(): void
     {
         $this->resetPage();
+
+        if (strlen($this->q) === 0) {
+            // Si el usuario borró la búsqueda: ocultamos el detalle y
+            // NO re-leemos ?ver= aunque siga en la URL.
+            $this->forceIgnoreVer = true;
+            $this->alumnoSeleccionado = null;
+        } else {
+            $this->forceIgnoreVer = false;
+        }
     }
 
-    /** Enter en el buscador => seleccionar primer match y bajar al detalle */
-    public function buscarAhora(): void
+
+    public function buscarAhora()
     {
         if (strlen($this->q) < 4) return;
 
         $first = User::where('role_id', 2)
             ->where(function ($qq) {
                 $qq->where('name', 'like', "%{$this->q}%")
-                   ->orWhere('email', 'like', "%{$this->q}%");
+                    ->orWhere('email', 'like', "%{$this->q}%");
             })
             ->orderBy('name')
             ->first();
 
         if ($first) {
-            $this->alumnoSeleccionado = $first;
-            // el scroll lo hace el anchor del botón "Ver" en Blade, sin JS
+            // Evita el GET a /livewire/update: navegación controlada por Livewire
+            return $this->redirect(url()->current() . '?ver=' . $first->id . '#detalle-alumno', navigate: true);
         }
     }
 
-    public function verAlumno($id): void
+
+
+
+    public function seleccionarAlumno($id): void
     {
+        $this->forceIgnoreVer = false;
         $this->alumnoSeleccionado = User::find($id);
     }
 
-    public function toggleVerAlumno($id): void
-    {
-        if ($this->alumnoSeleccionado && $this->alumnoSeleccionado->id === $id) {
-            $this->alumnoSeleccionado = null;
-        } else {
-            $this->alumnoSeleccionado = User::find($id);
-        }
-    }
 
     public function confirmarEliminar(int $id): void
     {
@@ -77,13 +86,12 @@ class Dashboard extends Component
     {
         User::find($id)?->delete();
 
-        $this->confirmarEliminarId = null;   // cierra modal
-        $this->alumnoSeleccionado  = null;   // limpia card detalle
+        $this->confirmarEliminarId = null;
+        $this->alumnoSeleccionado  = null;
         session()->flash('mensaje', 'Alumno eliminado correctamente.');
-        $this->resetPage();                  // evita página vacía al paginar
+        $this->resetPage();
     }
 
-    /** Dispara modal de edición con datos del profe */
     public function editarPerfil(): void
     {
         $u = Auth::user();
@@ -99,7 +107,6 @@ class Dashboard extends Component
         $this->mostrarEditarPerfil = true;
     }
 
-    /** Guarda perfil del profe (guarda ruta relativa en storage/public) */
     public function guardarPerfil(): void
     {
         $user = Auth::user();
@@ -116,7 +123,7 @@ class Dashboard extends Component
             $this->validate([
                 'fotoPerfilProfesor' => 'image|max:2048',
             ]);
-            // Guarda solo ruta relativa (ej: profile_photos/xxxx.jpg) en disco 'public'
+            // guarda ruta relativa (profile_photos/xxx.jpg) en disco 'public'
             $path = $this->fotoPerfilProfesor->store('profile_photos', 'public');
             $user->profile_photo = $path;
         }
@@ -134,6 +141,14 @@ class Dashboard extends Component
         $this->fotoPerfilGrande = $url;
     }
 
+    public function ocultar(): void
+    {
+        $this->forceIgnoreVer = true;
+        $this->alumnoSeleccionado = null;
+    }
+
+
+
     public function cerrarFotoPerfil(): void
     {
         $this->fotoPerfilGrande = null;
@@ -150,7 +165,6 @@ class Dashboard extends Component
         $this->mostrarAcercaDe     = false;
     }
 
-    /** Borra el flash verde usando solo Livewire (wire:poll en Blade) */
     public function clearFlash(): void
     {
         if (session()->has('mensaje')) {
@@ -164,25 +178,31 @@ class Dashboard extends Component
             abort(403, 'No tienes permiso para acceder a este módulo.');
         }
 
-        if (!$this->alumnoSeleccionado && request()->has('ver')) {
-            $this->alumnoSeleccionado = User::find((int) request('ver'));
+        // Selección desde ?ver= (salvo que estemos ignorándolo por limpieza de búsqueda)
+        $verId = request()->integer('ver');
+        if (!$this->forceIgnoreVer && $verId) {
+            $this->alumnoSeleccionado = User::find($verId);
         }
 
-        $alumnos = User::where('role_id', 2)
+        $alumnos = User::with('socialProfile')
+            ->where('role_id', 2)
             ->where(function ($query) {
                 $q = $this->q;
                 $query->where('name', 'like', "%{$q}%")
-                      ->orWhere('email', 'like', "%{$q}%");
+                    ->orWhere('email', 'like', "%{$q}%");
             })
+            ->orderBy('name')
             ->paginate(5);
 
         $sugerencias = collect();
         if (strlen($this->q) >= 4) {
-            $sugerencias = User::where('role_id', 2)
+            $sugerencias = User::with('socialProfile')
+                ->where('role_id', 2)
                 ->where(function ($qq) {
                     $qq->where('name', 'like', "%{$this->q}%")
-                       ->orWhere('email', 'like', "%{$this->q}%");
+                        ->orWhere('email', 'like', "%{$this->q}%");
                 })
+                ->orderBy('name')
                 ->limit(8)
                 ->get();
         }
