@@ -39,9 +39,9 @@ public ?string $notion    = null;
 
    public function mount()
 {
-    $this->alumno = Auth::user();
-
-    if ($this->alumno) {
+    $user = Auth::user();
+    if ($user instanceof User) {
+        $this->alumno = $user->load('course');
         $this->fill([
             'nombre'   => $this->alumno->name ?? '',
             'email'    => $this->alumno->email ?? '',
@@ -51,7 +51,7 @@ public ?string $notion    = null;
         ]);
 
         // Cargar redes sociales si existen
-        $sp = $this->alumno->socialProfiles()->first(); // o ->socialProfile si es hasOne
+        $sp = $this->alumno->socialProfiles()->first();
         if ($sp) {
             $this->linkedin  = $sp->linkedin;
             $this->github    = $sp->github;
