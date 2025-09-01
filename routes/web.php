@@ -18,6 +18,5 @@ Route::post('/login', [LoginController::class, 'login']);
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 // Dashboard del Profesor 
-
-    Route::get('/profesor/dashboard', \App\Livewire\Profesor\Dashboard::class)
-        ->name('profesor.dashboard');
+Route::get('/profesor/dashboard', \App\Livewire\Profesor\Dashboard::class)
+    ->name('profesor.dashboard');

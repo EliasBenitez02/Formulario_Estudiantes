@@ -9,35 +9,50 @@
                 <h1 class="text-3xl font-bold text-blue-700">SICEP - Dashboard del Profesor</h1>
             </div>
             <div class="flex gap-2 flex-wrap">
-                <button type="button" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors" wire:click="acercaDe">Acerca de</button>
+                <button type="button"
+                    class="px-4 py-2 rounded bg-blue-500 text-white hover:bg-blue-600 transition-colors"
+                    wire:click="acercaDe">
+                    Acerca de
+                </button>
+
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
-                    <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors">Cerrar sesión</button>
+                    <button type="submit"
+                        class="px-4 py-2 rounded bg-blue-500 text-white hover:bg-blue-600 transition-colors">
+                        Cerrar sesión
+                    </button>
                 </form>
             </div>
+
         </div>
 
         {{-- Perfil del Profesor --}}
         <div class="bg-white rounded-xl shadow p-6 flex flex-col sm:flex-row items-center gap-6 mb-8">
             <img
                 src="{{ auth()->user()->profile_photo
-                    ? asset('storage/'.auth()->user()->profile_photo)
-                    : 'https://ui-avatars.com/api/?name='.urlencode(auth()->user()->name) }}"
+            ? asset('storage/'.auth()->user()->profile_photo)
+            : 'https://ui-avatars.com/api/?name='.urlencode(auth()->user()->name) }}"
                 class="w-20 h-20 rounded-full object-cover border-2 border-blue-500 cursor-pointer"
                 wire:click="verFotoPerfil('{{ auth()->user()->profile_photo
-                    ? asset('storage/'.auth()->user()->profile_photo)
-                    : 'https://ui-avatars.com/api/?name='.urlencode(auth()->user()->name) }}')">
+            ? asset('storage/'.auth()->user()->profile_photo)
+            : 'https://ui-avatars.com/api/?name='.urlencode(auth()->user()->name) }}')">
 
             <div class="text-center sm:text-left">
                 <p class="font-bold text-xl text-blue-700">{{ auth()->user()->name }}</p>
                 <p class="text-gray-600">{{ auth()->user()->email }}</p>
+
                 <div class="flex gap-2 mt-2 justify-center sm:justify-start">
-                    <button type="button" class="bg-blue-500 text-white px-4 py-1 rounded hover:bg-blue-600 transition-colors" wire:click="editarPerfil">
+                    <button type="button"
+                        class="px-4 py-1 rounded bg-blue-500 text-white hover:bg-blue-600 transition-colors"
+                        wire:click="editarPerfil">
                         Editar Perfil
                     </button>
                 </div>
             </div>
         </div>
+
+
+
 
         {{-- Lista de Alumnos --}}
         <div id="lista-alumnos" class="bg-white rounded-xl shadow p-6">
@@ -79,9 +94,6 @@
                 </div>
                 @endif
                 @endif
-
-
-
             </div>
 
             <div class="overflow-x-auto">
@@ -117,7 +129,6 @@
                                 <div class="flex flex-wrap items-center gap-2">
                                     @if($alumno->whatsapp)
                                     <a href="https://wa.me/{{ $alumno->whatsapp }}" target="_blank" rel="noopener" title="WhatsApp" class="text-green-500 hover:text-green-700">
-                                        {{-- ícono --}}
                                         <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
                                             <path d="M20.52 3.48A12 12 0 003.48 20.52a12 12 0 0017.04-17.04zm-8.52 18.52a10.5 10.5 0 01-5.62-1.62l-.4-.24-4.13 1.08 1.1-4.03-.26-.42A10.5 10.5 0 1112 22.01zm5.2-7.2c-.28-.14-1.65-.81-1.9-.9-.25-.09-.43-.14-.61.14-.18.28-.7.9-.86 1.08-.16.18-.32.2-.6.07-.28-.13-1.18-.44-2.25-1.4-.83-.74-1.39-1.65-1.55-1.93-.16-.28-.02-.43.12-.57.13-.13.28-.34.42-.51.14-.17.18-.29.27-.48.09-.19.05-.36-.02-.5-.07-.14-.61-1.47-.84-2.01-.22-.53-.45-.46-.61-.47-.16-.01-.36-.01-.56-.01-.19 0-.5.07-.76.34-.26.27-1 1-1 2.43s1.03 2.82 1.18 3.02c.15.2 2.03 3.18 5.01 4.34.7.27 1.25.43 1.68.55.71.19 1.36.16 1.87.1.57-.07 1.65-.67 1.89-1.32.24-.65.24-1.21.17-1.32z" />
                                         </svg>
@@ -170,20 +181,17 @@
                             <td class="p-3">
                                 <div class="flex items-center gap-2">
                                     @if($alumnoSeleccionado && $alumnoSeleccionado->id === $alumno->id)
-                                    {{-- Ocultar => SUBIR a la lista (sin ?ver=) --}}
                                     <a href="{{ request()->url() }}#lista-alumnos"
                                         class="px-3 py-1 bg-gray-500 text-white rounded hover:bg-gray-600 transition-colors">
                                         Ocultar
                                     </a>
                                     @else
-                                    {{-- Ver => BAJAR al detalle con selección vía ?ver= --}}
                                     <a href="{{ request()->url() }}?ver={{ $alumno->id }}#detalle-alumno"
                                         class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors">
                                         Ver
                                     </a>
                                     @endif
 
-                                    {{-- Eliminar --}}
                                     <button type="button"
                                         wire:click="confirmarEliminar({{ $alumno->id }})"
                                         class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition-colors">
@@ -211,12 +219,12 @@
         <div class="mt-8 p-6 bg-white rounded-xl shadow flex flex-col md:flex-row gap-6 items-center">
             <img
                 src="{{ $alumnoSeleccionado->profile_photo
-                        ? asset('storage/'.$alumnoSeleccionado->profile_photo)
-                        : 'https://ui-avatars.com/api/?name='.urlencode($alumnoSeleccionado->name) }}"
+                            ? asset('storage/'.$alumnoSeleccionado->profile_photo)
+                            : 'https://ui-avatars.com/api/?name='.urlencode($alumnoSeleccionado->name) }}"
                 class="w-32 h-32 rounded-full object-cover border-2 border-green-400 cursor-pointer"
                 wire:click="verFotoPerfil('{{ $alumnoSeleccionado->profile_photo
-                        ? asset('storage/'.$alumnoSeleccionado->profile_photo)
-                        : 'https://ui-avatars.com/api/?name='.urlencode($alumnoSeleccionado->name) }}')">
+                            ? asset('storage/'.$alumnoSeleccionado->profile_photo)
+                            : 'https://ui-avatars.com/api/?name='.urlencode($alumnoSeleccionado->name) }}')">
             <div>
                 <h2 class="text-xl font-bold mb-3 text-blue-700">Detalles del Alumno</h2>
                 <ul class="space-y-2">
@@ -240,28 +248,152 @@
         </div>
         @endif
 
-        {{-- Modales --}}
+        {{-- Modal Editar Perfil --}}
         @if($mostrarEditarPerfil)
         <div class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-            <div class="bg-white p-6 rounded-xl shadow-lg w-full max-w-md">
-                <h2 class="text-xl font-bold mb-4 text-blue-700">Editar Perfil</h2>
-                <form wire:submit.prevent="guardarPerfil">
-                    <div class="mb-2"><label class="block font-bold">Nombre</label><input type="text" wire:model.defer="profesorEdit.name" class="w-full border rounded p-2"></div>
-                    <div class="mb-2"><label class="block font-bold">Email</label><input type="email" wire:model.defer="profesorEdit.email" class="w-full border rounded p-2"></div>
-                    <div class="mb-2"><label class="block font-bold">DNI</label><input type="text" wire:model.defer="profesorEdit.dni" class="w-full border rounded p-2"></div>
-                    <div class="mb-2"><label class="block font-bold">WhatsApp</label><input type="text" wire:model.defer="profesorEdit.whatsapp" class="w-full border rounded p-2"></div>
-                    <div class="mb-2"><label class="block font-bold">Fecha de Nacimiento</label><input type="date" wire:model.defer="profesorEdit.fecha_nacimiento" class="w-full border rounded p-2"></div>
-                    <div class="mb-2"><label class="block font-bold">Comisión</label><input type="text" wire:model.defer="profesorEdit.comision" class="w-full border rounded p-2"></div>
-                    <div class="mb-2"><label class="block font-bold">Carrera</label><input type="text" wire:model.defer="profesorEdit.carrera" class="w-full border rounded p-2"></div>
-                    <div class="mb-2"><label class="block font-bold">Foto de Perfil</label><input type="file" wire:model="fotoPerfilProfesor" class="w-full"></div>
-                    <div class="flex gap-2 mt-4">
-                        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors">Guardar</button>
-                        <button type="button" wire:click="cerrarModales" class="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400 transition-colors">Cancelar</button>
+            <!-- Contenedor con altura máx y scroll interno -->
+            <div class="bg-white rounded-xl shadow-lg w-full max-w-xl max-h-[90vh] overflow-y-auto">
+                <!-- Header sticky -->
+                <div class="p-6 border-b sticky top-0 bg-white">
+                    <h2 class="text-xl font-bold text-blue-700">Editar Perfil</h2>
+                </div>
+
+                <div class="p-6 pt-4 space-y-6">
+
+                    {{-- ================== FORM: DATOS DEL PERFIL + FOTO ================== --}}
+                    <form wire:submit.prevent="guardarPerfil" class="space-y-4">
+                        {{-- Foto actual --}}
+                        <div class="flex items-center gap-4">
+                            <div class="text-sm text-gray-600">Foto actual:</div>
+                            <img
+                                src="{{ auth()->user()->profile_photo
+                            ? asset('storage/'.auth()->user()->profile_photo)
+                            : 'https://ui-avatars.com/api/?name='.urlencode(auth()->user()->name) }}"
+                                class="w-16 h-16 rounded-full object-cover border">
+                        </div>
+
+                        {{-- Preview nueva foto (si se selecciona) --}}
+                        @if($fotoPerfilProfesor)
+                        <div class="flex items-center gap-4">
+                            <div class="text-sm text-gray-600">Nueva foto:</div>
+                            <img src="{{ $fotoPerfilProfesor->temporaryUrl() }}" class="w-16 h-16 rounded-full object-cover border">
+                        </div>
+                        @endif
+
+                        {{-- Input archivo (solo imágenes) --}}
+                        <div>
+                            <label class="block font-semibold mb-1">Cambiar foto</label>
+                            <input
+                                type="file"
+                                wire:model="fotoPerfilProfesor"
+                                accept="image/*"
+                                class="w-full border rounded p-2">
+                            @error('fotoPerfilProfesor')
+                            <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                            @enderror
+                            <p class="text-xs text-gray-500 mt-1">Formatos permitidos: JPG, JPEG, PNG, WEBP. Máx: 2 MB.</p>
+                        </div>
+
+                        {{-- Campos de datos --}}
+                        <div>
+                            <label class="block font-bold">Nombre</label>
+                            <input type="text" wire:model.defer="profesorEdit.name" class="w-full border rounded p-2">
+                        </div>
+                        <div>
+                            <label class="block font-bold">Email</label>
+                            <input type="email" wire:model.defer="profesorEdit.email" class="w-full border rounded p-2">
+                        </div>
+                        <div>
+                            <label class="block font-bold">DNI</label>
+                            <input type="text" wire:model.defer="profesorEdit.dni" class="w-full border rounded p-2">
+                        </div>
+                        <div>
+                            <label class="block font-bold">WhatsApp</label>
+                            <input type="text" wire:model.defer="profesorEdit.whatsapp" class="w-full border rounded p-2">
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block font-bold">Fecha de Nacimiento</label>
+                                <input type="date" wire:model.defer="profesorEdit.fecha_nacimiento" class="w-full border rounded p-2">
+                            </div>
+                            <div>
+                                <label class="block font-bold">Comisión</label>
+                                <input type="text" wire:model.defer="profesorEdit.comision" class="w-full border rounded p-2">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block font-bold">Carrera</label>
+                            <input type="text" wire:model.defer="profesorEdit.carrera" class="w-full border rounded p-2">
+                        </div>
+
+                        <div class="flex gap-2 pt-2">
+                            <button type="submit"
+                                class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors">
+                                Guardar cambios
+                            </button>
+                            <button type="button" wire:click="cerrarModales"
+                                class="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400 transition-colors">
+                                Cancelar
+                            </button>
+                        </div>
+                    </form>
+
+                    {{-- ================== SEPARADOR ================== --}}
+                    <div class="border-t"></div>
+
+                    {{-- ================== FORM: CAMBIAR CONTRASEÑA ================== --}}
+                    <div>
+                        <h3 class="text-lg font-semibold text-blue-700 mb-3">Cambiar contraseña</h3>
+
+                        <form wire:submit.prevent="actualizarPassword" class="space-y-3">
+                            <div>
+                                <label class="block font-semibold mb-1">Contraseña actual</label>
+                                <input type="password" wire:model.defer="passForm.actual" class="w-full border rounded p-2" autocomplete="current-password">
+                                @error('passForm.actual')
+                                <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block font-semibold mb-1">Nueva contraseña</label>
+                                    <input type="password" wire:model.defer="passForm.nueva" class="w-full border rounded p-2" autocomplete="new-password">
+                                    @error('passForm.nueva')
+                                    <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                                <div>
+                                    <label class="block font-semibold mb-1">Confirmar contraseña</label>
+                                    <input type="password" wire:model.defer="passForm.confirmar" class="w-full border rounded p-2" autocomplete="new-password">
+                                    @error('passForm.confirmar')
+                                    <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <p class="text-xs text-gray-500">Mínimo 8 caracteres, con mayúsculas, minúsculas y números.</p>
+
+                            <div class="flex justify-end pt-1">
+                                <button type="submit"
+                                    class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors">
+                                    Actualizar contraseña
+                                </button>
+                            </div>
+                        </form>
                     </div>
-                </form>
+
+                </div>
             </div>
         </div>
         @endif
+
+
+
+
+
+
 
         @if(!empty($confirmarEliminarId))
         <div class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
@@ -302,3 +434,4 @@
         </div>
         @endif
     </div>
+</div>

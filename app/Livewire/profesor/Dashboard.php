@@ -7,6 +7,8 @@ use Livewire\WithPagination;
 use Livewire\WithFileUploads;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rules\Password;
 
 class Dashboard extends Component
 {
@@ -17,6 +19,13 @@ class Dashboard extends Component
 
     public $mostrarEditarPerfil = false;
     public $mostrarAcercaDe = false;
+
+    /* El form de cambiar contraseña */
+    public array $passForm = [
+        'actual'    => '',
+        'nueva'     => '',
+        'confirmar' => '',
+    ];
 
     public $profesorEdit = [];
     public $fotoPerfilGrande = null;
@@ -30,8 +39,6 @@ class Dashboard extends Component
 
     public function mount(): void
     {
-        // Si querés permitir selección inicial por ?ver=, mantené esto;
-        // si NO, comentá las 3 líneas siguientes.
         $verId = request()->integer('ver');
         if ($verId) $this->seleccionarAlumno($verId);
     }
@@ -41,7 +48,6 @@ class Dashboard extends Component
         $this->resetPage();
 
         if (strlen($this->q) === 0) {
-            // Al limpiar el buscador: salir del detalle y volver a la lista completa
             $this->forceIgnoreVer = true;
             $this->alumnoSeleccionado = null;
         } else {
@@ -49,12 +55,10 @@ class Dashboard extends Component
         }
     }
 
-    /** Enter en el buscador => mantener SOLO la lista filtrada (sin abrir detalle) */
+    /** Enter en el buscador */
     public function buscarAhora(): void
     {
         if (strlen($this->q) < 4) return;
-
-        // Solo asegurar paginación desde el inicio y no tocar el detalle:
         $this->resetPage();
         $this->alumnoSeleccionado = null;
     }
@@ -63,14 +67,12 @@ class Dashboard extends Component
     {
         $this->alumnoSeleccionado = User::with('socialProfile')->find($id);
         $this->forceIgnoreVer = false;
-        // SIN JS: el scroll se hace con ancla en la vista (#detalle-alumno)
     }
 
     public function ocultarDetalle(): void
     {
         $this->alumnoSeleccionado = null;
         $this->forceIgnoreVer = true;
-        // SIN JS: el scroll se hace con ancla en la vista (#lista-alumnos)
     }
 
     public function confirmarEliminar(int $id): void
@@ -110,31 +112,71 @@ class Dashboard extends Component
 
     public function guardarPerfil(): void
     {
-        $user = Auth::user();
+        // Solo permite imágenes hasta 2MB
+        $this->validate([
+            'fotoPerfilProfesor' => 'required|image|mimes:jpg,jpeg,png,webp|max:2048',
+        ], [
+            'fotoPerfilProfesor.required' => 'Seleccioná una imagen.',
+            'fotoPerfilProfesor.image'    => 'El archivo debe ser una imagen.',
+            'fotoPerfilProfesor.mimes'    => 'Formatos permitidos: JPG, JPEG, PNG, WEBP.',
+            'fotoPerfilProfesor.max'      => 'La imagen no puede superar los 2 MB.',
+        ]);
 
-        $user->name             = $this->profesorEdit['name'] ?? $user->name;
-        $user->email            = $this->profesorEdit['email'] ?? $user->email;
-        $user->dni              = $this->profesorEdit['dni'] ?? null;
-        $user->whatsapp         = $this->profesorEdit['whatsapp'] ?? null;
-        $user->fecha_nacimiento = $this->profesorEdit['fecha_nacimiento'] ?? null;
-        $user->comision         = $this->profesorEdit['comision'] ?? null;
-        $user->carrera          = $this->profesorEdit['carrera'] ?? null;
+        $user = \Illuminate\Support\Facades\Auth::user();
 
-        if ($this->fotoPerfilProfesor) {
-            $this->validate([
-                'fotoPerfilProfesor' => 'image|max:2048',
-            ]);
-            $path = $this->fotoPerfilProfesor->store('profile_photos', 'public');
-            $user->profile_photo = $path;
-        }
-
+        // Guardar en storage/app/public/profile_photos
+        $path = $this->fotoPerfilProfesor->store('profile_photos', 'public');
+        $user->profile_photo = $path;
         $user->save();
 
+        // Cerrar modal y limpiar input
         $this->mostrarEditarPerfil = false;
         $this->fotoPerfilProfesor  = null;
 
-        session()->flash('mensaje', 'Perfil actualizado correctamente.');
+        session()->flash('mensaje', 'Foto de perfil actualizada correctamente.');
     }
+
+
+    public function actualizarPassword(): void
+    {
+        $this->validate(
+            [
+                'passForm.actual'    => ['required', 'current_password'],
+                'passForm.nueva'     => [
+                    'required',
+                    'string',
+                    Password::min(8)->letters()->mixedCase()->numbers(),
+                ],
+                'passForm.confirmar' => ['required', 'same:passForm.nueva'],
+            ],
+            [
+                'passForm.actual.required'    => 'Ingresá tu contraseña actual.',
+                'passForm.actual.current_password' => 'La contraseña actual no es correcta.',
+                'passForm.nueva.required'     => 'Ingresá la nueva contraseña.',
+                'passForm.nueva.min'          => 'La nueva contraseña debe tener al menos :min caracteres.',
+                'passForm.confirmar.same'     => 'La confirmación no coincide.',
+            ]
+        );
+
+        $user = Auth::user();
+        $user->password = Hash::make($this->passForm['nueva']);
+        $user->save();
+
+        $this->mostrarCambiarPass = false;
+        $this->passForm = ['actual' => '', 'nueva' => '', 'confirmar' => ''];
+
+        session()->flash('mensaje', 'Contraseña actualizada correctamente.');
+    }
+
+    protected function authenticated($request, $user)
+    {
+        if ($user->role_id == 1) {
+            return redirect()->route('profesor.dashboard');
+        }
+        return redirect()->route('student.student-dashboard');
+    }
+
+    /** ========= utilidades UI ========= */
 
     public function verFotoPerfil($url): void
     {
@@ -175,7 +217,7 @@ class Dashboard extends Component
             ->where(function ($query) {
                 $q = $this->q;
                 $query->where('name', 'like', "%{$q}%")
-                      ->orWhere('email', 'like', "%{$q}%");
+                    ->orWhere('email', 'like', "%{$q}%");
             })
             ->orderBy('name')
             ->paginate(5);
@@ -186,7 +228,7 @@ class Dashboard extends Component
                 ->where('role_id', 2)
                 ->where(function ($qq) {
                     $qq->where('name', 'like', "%{$this->q}%")
-                       ->orWhere('email', 'like', "%{$this->q}%");
+                        ->orWhere('email', 'like', "%{$this->q}%");
                 })
                 ->orderBy('name')
                 ->limit(8)
