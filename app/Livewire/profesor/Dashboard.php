@@ -6,7 +6,6 @@ use Livewire\Component;
 use Livewire\WithPagination;
 use Livewire\WithFileUploads;
 use App\Models\User;
-use App\Models\SocialProfile;
 use Illuminate\Support\Facades\Auth;
 
 class Dashboard extends Component
@@ -29,13 +28,20 @@ class Dashboard extends Component
 
     protected $paginationTheme = 'tailwind';
 
+    public function mount(): void
+    {
+        // Si querés permitir selección inicial por ?ver=, mantené esto;
+        // si NO, comentá las 3 líneas siguientes.
+        $verId = request()->integer('ver');
+        if ($verId) $this->seleccionarAlumno($verId);
+    }
+
     public function updatedQ(): void
     {
         $this->resetPage();
 
         if (strlen($this->q) === 0) {
-            // Si el usuario borró la búsqueda: ocultamos el detalle y
-            // NO re-leemos ?ver= aunque siga en la URL.
+            // Al limpiar el buscador: salir del detalle y volver a la lista completa
             $this->forceIgnoreVer = true;
             $this->alumnoSeleccionado = null;
         } else {
@@ -43,34 +49,29 @@ class Dashboard extends Component
         }
     }
 
-
-    public function buscarAhora()
+    /** Enter en el buscador => mantener SOLO la lista filtrada (sin abrir detalle) */
+    public function buscarAhora(): void
     {
         if (strlen($this->q) < 4) return;
 
-        $first = User::where('role_id', 2)
-            ->where(function ($qq) {
-                $qq->where('name', 'like', "%{$this->q}%")
-                    ->orWhere('email', 'like', "%{$this->q}%");
-            })
-            ->orderBy('name')
-            ->first();
-
-        if ($first) {
-            // Evita el GET a /livewire/update: navegación controlada por Livewire
-            return $this->redirect(url()->current() . '?ver=' . $first->id . '#detalle-alumno', navigate: true);
-        }
+        // Solo asegurar paginación desde el inicio y no tocar el detalle:
+        $this->resetPage();
+        $this->alumnoSeleccionado = null;
     }
-
-
-
 
     public function seleccionarAlumno($id): void
     {
+        $this->alumnoSeleccionado = User::with('socialProfile')->find($id);
         $this->forceIgnoreVer = false;
-        $this->alumnoSeleccionado = User::find($id);
+        // SIN JS: el scroll se hace con ancla en la vista (#detalle-alumno)
     }
 
+    public function ocultarDetalle(): void
+    {
+        $this->alumnoSeleccionado = null;
+        $this->forceIgnoreVer = true;
+        // SIN JS: el scroll se hace con ancla en la vista (#lista-alumnos)
+    }
 
     public function confirmarEliminar(int $id): void
     {
@@ -123,7 +124,6 @@ class Dashboard extends Component
             $this->validate([
                 'fotoPerfilProfesor' => 'image|max:2048',
             ]);
-            // guarda ruta relativa (profile_photos/xxx.jpg) en disco 'public'
             $path = $this->fotoPerfilProfesor->store('profile_photos', 'public');
             $user->profile_photo = $path;
         }
@@ -140,14 +140,6 @@ class Dashboard extends Component
     {
         $this->fotoPerfilGrande = $url;
     }
-
-    public function ocultar(): void
-    {
-        $this->forceIgnoreVer = true;
-        $this->alumnoSeleccionado = null;
-    }
-
-
 
     public function cerrarFotoPerfil(): void
     {
@@ -178,18 +170,12 @@ class Dashboard extends Component
             abort(403, 'No tienes permiso para acceder a este módulo.');
         }
 
-        // Selección desde ?ver= (salvo que estemos ignorándolo por limpieza de búsqueda)
-        $verId = request()->integer('ver');
-        if (!$this->forceIgnoreVer && $verId) {
-            $this->alumnoSeleccionado = User::find($verId);
-        }
-
         $alumnos = User::with('socialProfile')
             ->where('role_id', 2)
             ->where(function ($query) {
                 $q = $this->q;
                 $query->where('name', 'like', "%{$q}%")
-                    ->orWhere('email', 'like', "%{$q}%");
+                      ->orWhere('email', 'like', "%{$q}%");
             })
             ->orderBy('name')
             ->paginate(5);
@@ -200,7 +186,7 @@ class Dashboard extends Component
                 ->where('role_id', 2)
                 ->where(function ($qq) {
                     $qq->where('name', 'like', "%{$this->q}%")
-                        ->orWhere('email', 'like', "%{$this->q}%");
+                       ->orWhere('email', 'like', "%{$this->q}%");
                 })
                 ->orderBy('name')
                 ->limit(8)
