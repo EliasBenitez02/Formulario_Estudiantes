@@ -2,145 +2,200 @@
 
 namespace App\Livewire\Profesor;
 
-use Livewire\WithFileUploads;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Livewire\WithFileUploads;
 use App\Models\User;
-use Iluminate\Validation\Rule;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\auth;
+use Illuminate\Support\Facades\Auth;
 
 class Dashboard extends Component
 {
     use WithPagination, WithFileUploads;
-    
+
     public $q = '';
     public ?User $alumnoSeleccionado = null;
+
     public $mostrarEditarPerfil = false;
     public $mostrarAcercaDe = false;
+
     public $profesorEdit = [];
     public $fotoPerfilGrande = null;
     public $fotoPerfilProfesor;
+    public ?int $confirmarEliminarId = null;
+
+    /** Flag para ignorar ?ver= cuando el usuario limpia el buscador */
+    public bool $forceIgnoreVer = false;
 
     protected $paginationTheme = 'tailwind';
 
-    public function updatedQ()
+    public function mount(): void
     {
+        // Si querés permitir selección inicial por ?ver=, mantené esto;
+        // si NO, comentá las 3 líneas siguientes.
+        $verId = request()->integer('ver');
+        if ($verId) $this->seleccionarAlumno($verId);
+    }
+
+    public function updatedQ(): void
+    {
+        $this->resetPage();
+
+        if (strlen($this->q) === 0) {
+            // Al limpiar el buscador: salir del detalle y volver a la lista completa
+            $this->forceIgnoreVer = true;
+            $this->alumnoSeleccionado = null;
+        } else {
+            $this->forceIgnoreVer = false;
+        }
+    }
+
+    /** Enter en el buscador => mantener SOLO la lista filtrada (sin abrir detalle) */
+    public function buscarAhora(): void
+    {
+        if (strlen($this->q) < 4) return;
+
+        // Solo asegurar paginación desde el inicio y no tocar el detalle:
+        $this->resetPage();
+        $this->alumnoSeleccionado = null;
+    }
+
+    public function seleccionarAlumno($id): void
+    {
+        $this->alumnoSeleccionado = User::with('socialProfile')->find($id);
+        $this->forceIgnoreVer = false;
+        // SIN JS: el scroll se hace con ancla en la vista (#detalle-alumno)
+    }
+
+    public function ocultarDetalle(): void
+    {
+        $this->alumnoSeleccionado = null;
+        $this->forceIgnoreVer = true;
+        // SIN JS: el scroll se hace con ancla en la vista (#lista-alumnos)
+    }
+
+    public function confirmarEliminar(int $id): void
+    {
+        $this->confirmarEliminarId = $id;
+    }
+
+    public function cancelarEliminar(): void
+    {
+        $this->confirmarEliminarId = null;
+    }
+
+    public function eliminarAlumno($id): void
+    {
+        User::find($id)?->delete();
+
+        $this->confirmarEliminarId = null;
+        $this->alumnoSeleccionado  = null;
+        session()->flash('mensaje', 'Alumno eliminado correctamente.');
         $this->resetPage();
     }
 
-    public function verAlumno($id)
+    public function editarPerfil(): void
     {
-        $this->alumnoSeleccionado = User::find($id);
-    }
-
-    public function eliminarAlumno($id)
-    {
-        User::find($id)?->delete();
-        $this->alumnoSeleccionado = null;
-        session()->flash('mensaje', 'Alumno eliminado correctamente.');
-    }
-
-    // Mostrar formulario de edición
-    public function editarPerfil()
-    {
+        $u = Auth::user();
         $this->profesorEdit = [
-            'name' => auth::user()->name,
-            'email' => auth::user()->email,
-            'dni' => auth::user()->dni ?? '',
-            'whatsapp' => auth::user()->whatsapp ?? '',
-            'fecha_nacimiento' => auth::user()->fecha_nacimiento ?? '',
-            'comision' => auth::user()->comision ?? '',
-            'carrera' => auth::user()->carrera ?? '',
+            'name'             => $u->name,
+            'email'            => $u->email,
+            'dni'              => $u->dni ?? '',
+            'whatsapp'         => $u->whatsapp ?? '',
+            'fecha_nacimiento' => $u->fecha_nacimiento ?? '',
+            'comision'         => $u->comision ?? '',
+            'carrera'          => $u->carrera ?? '',
         ];
         $this->mostrarEditarPerfil = true;
     }
 
-    // Guardar cambios del perfil
-    public function guardarPerfil()
+    public function guardarPerfil(): void
     {
-        $user = auth::user();
-    $user->name = $this->profesorEdit['name'];
-    $user->email = $this->profesorEdit['email'];
-    $user->dni = $this->profesorEdit['dni'];
-    $user->whatsapp = $this->profesorEdit['whatsapp'];
-    $user->fecha_nacimiento = $this->profesorEdit['fecha_nacimiento'] ?: null;
-    $user->comision = $this->profesorEdit['comision'];
-    $user->carrera = $this->profesorEdit['carrera'];
+        $user = Auth::user();
+
+        $user->name             = $this->profesorEdit['name'] ?? $user->name;
+        $user->email            = $this->profesorEdit['email'] ?? $user->email;
+        $user->dni              = $this->profesorEdit['dni'] ?? null;
+        $user->whatsapp         = $this->profesorEdit['whatsapp'] ?? null;
+        $user->fecha_nacimiento = $this->profesorEdit['fecha_nacimiento'] ?? null;
+        $user->comision         = $this->profesorEdit['comision'] ?? null;
+        $user->carrera          = $this->profesorEdit['carrera'] ?? null;
 
         if ($this->fotoPerfilProfesor) {
             $this->validate([
                 'fotoPerfilProfesor' => 'image|max:2048',
             ]);
             $path = $this->fotoPerfilProfesor->store('profile_photos', 'public');
-            $user->profile_photo = $path; // solo 'profile_photos/archivo.jpg'
+            $user->profile_photo = $path;
         }
+
         $user->save();
+
         $this->mostrarEditarPerfil = false;
-        $this->fotoPerfilProfesor = null;
+        $this->fotoPerfilProfesor  = null;
+
         session()->flash('mensaje', 'Perfil actualizado correctamente.');
     }
 
-    public function verFotoPerfil($url)
+    public function verFotoPerfil($url): void
     {
         $this->fotoPerfilGrande = $url;
     }
 
-    public function cerrarFotoPerfil()
+    public function cerrarFotoPerfil(): void
     {
         $this->fotoPerfilGrande = null;
     }
 
-    // Mostrar modal/card de Acerca de
-    public function acercaDe()
+    public function acercaDe(): void
     {
         $this->mostrarAcercaDe = true;
     }
 
-    public function toggleVerAlumno($id)
-    {
-        if ($this->alumnoSeleccionado && $this->alumnoSeleccionado->id == $id) {
-            $this->alumnoSeleccionado = null;
-        } else {
-            $this->alumnoSeleccionado = User::find($id);
-        }
-    }
-
-    // Cerrar modales
-    public function cerrarModales()
+    public function cerrarModales(): void
     {
         $this->mostrarEditarPerfil = false;
-        $this->mostrarAcercaDe = false;
+        $this->mostrarAcercaDe     = false;
     }
 
-    #Layouts[('layouts.app')]
+    public function clearFlash(): void
+    {
+        if (session()->has('mensaje')) {
+            session()->forget('mensaje');
+        }
+    }
+
     public function render()
     {
-        if (!auth::user() || auth::user()->role_id != 2) {
+        if (!Auth::check() || Auth::user()->role_id != 1) {
             abort(403, 'No tienes permiso para acceder a este módulo.');
         }
-        $profesor = auth::user();
-        $cursoId = $profesor->course_id;
-        $alumnos = User::where('role_id', 3)
-            ->where('course_id', $cursoId)
-            ->where(function ($query) {
-                $query->where('name', 'like', "%{$this->q}%")
-                    ->orWhere('email', 'like', "%{$this->q}%");
-            })
-            ->paginate(8);
 
-        $sugerencias = [];
-        if (strlen($this->q) >= 2) {
-            $sugerencias = User::where('role_id', 3)
-                ->where('course_id', $cursoId)
-                ->where('name', 'like', "%{$this->q}%")
-                ->limit(5)
+        $alumnos = User::with('socialProfile')
+            ->where('role_id', 2)
+            ->where(function ($query) {
+                $q = $this->q;
+                $query->where('name', 'like', "%{$q}%")
+                      ->orWhere('email', 'like', "%{$q}%");
+            })
+            ->orderBy('name')
+            ->paginate(5);
+
+        $sugerencias = collect();
+        if (strlen($this->q) >= 4) {
+            $sugerencias = User::with('socialProfile')
+                ->where('role_id', 2)
+                ->where(function ($qq) {
+                    $qq->where('name', 'like', "%{$this->q}%")
+                       ->orWhere('email', 'like', "%{$this->q}%");
+                })
+                ->orderBy('name')
+                ->limit(8)
                 ->get();
         }
 
-          return view('livewire.profesor.dashboard', [
-            'alumnos' => $alumnos,
-            'sugerencias' => $sugerencias
+        return view('livewire.profesor.dashboard', [
+            'alumnos'     => $alumnos,
+            'sugerencias' => $sugerencias,
         ])->layout('layouts.content');
     }
 }
