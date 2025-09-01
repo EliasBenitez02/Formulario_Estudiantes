@@ -166,12 +166,12 @@ class Dashboard extends Component
 
     public function render()
     {
-        if (!Auth::check() || Auth::user()->role_id != 1) {
+        if (!Auth::check() || Auth::user()->role_id != 2) {
             abort(403, 'No tienes permiso para acceder a este módulo.');
         }
 
         $alumnos = User::with('socialProfile')
-            ->where('role_id', 2)
+            ->where('role_id', 3)
             ->where(function ($query) {
                 $q = $this->q;
                 $query->where('name', 'like', "%{$q}%")
@@ -183,7 +183,7 @@ class Dashboard extends Component
         $sugerencias = collect();
         if (strlen($this->q) >= 4) {
             $sugerencias = User::with('socialProfile')
-                ->where('role_id', 2)
+                ->where('role_id', 3)
                 ->where(function ($qq) {
                     $qq->where('name', 'like', "%{$this->q}%")
                        ->orWhere('email', 'like', "%{$this->q}%");

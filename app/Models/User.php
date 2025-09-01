@@ -59,6 +59,12 @@ class User extends Authenticatable
         'remember_token',
     ];
 
+    // Relación hasOne para socialProfile (singular)
+    public function socialProfile()
+    {
+        return $this->hasOne(\App\Models\SocialProfile::class);
+    }
+
     /**
      * Get the attributes that should be cast.
      *
