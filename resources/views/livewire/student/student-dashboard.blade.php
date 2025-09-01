@@ -1,46 +1,18 @@
 <div class="min-h-[80vh] bg-slate-50">
   <!-- HEADER -->
   <header class="bg-white border-b">
-    <div class="mx-auto max-w-6xl px-4 sm:px-6 py-3 flex flex-col sm:flex-row items-center justify-between">
-      <div class="flex items-center gap-2">
-        <div class="h-9 w-9 rounded-xl bg-blue-100 ring-1 ring-blue-200 flex items-center justify-center">
-          <span class="text-blue-600 text-lg">🎓</span>
-        </div>
-        <div class="leading-tight">
-          <p class="text-slate-800 font-semibold">SICEP</p>
-          <p class="text-[11px] text-slate-500 -mt-0.5">Panel del Alumno</p>
-        </div>
+    <div class="mx-auto max-w-6xl px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center gap-4">
+        <svg class="w-10 h-10 text-blue-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8v-10h-8v10zm0-18v6h8V3h-8z" />
+        </svg>
+        <h1 class="text-2xl font-bold text-blue-700">SICEP - Dashboard del Alumno</h1>
       </div>
+      <div class="flex gap-2 flex-wrap">
 
-      <!-- Centro: nombre y foto -->
-      <div class="flex flex-col items-center gap-2 flex-1">
-        <div class="h-12 w-12 rounded-full overflow-hidden bg-slate-200 ring-1 ring-white mx-auto">
-          @if($alumno->profile_photo)
-            <img src="{{ asset('storage/'.$alumno->profile_photo) }}" class="w-full h-full object-cover" alt="Foto">
-          @else
-            <div class="w-full h-full flex items-center justify-center text-slate-600 font-semibold">
-              {{ strtoupper(substr($alumno->name,0,1)) }}
-            </div>
-          @endif
-        </div>
-
-        <div class="text-center leading-tight">
-          <p class="text-sm text-slate-800 font-medium">{{ $alumno->name }}</p>
-          <p class="text-[11px] text-slate-400 -mt-0.5">Alumno</p>
-        </div>
-       
-      </div>
-
-      <div class="flex items-center gap-3">
         <form method="POST" action="{{ route('logout') }}">
           @csrf
-          <button type="submit"
-              class="inline-flex items-center gap-1.5 text-xs font-medium rounded-lg border border-rose-200 bg-rose-50 px-2.5 py-1.5 text-rose-700 hover:bg-rose-100">
-              <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                  <path d="M15 12H3m0 0l4-4m-4 4l4 4m8-8v8a4 4 0 004 4h0a4 4 0 004-4V8a4 4 0 00-4-4h0a4 4 0 00-4 4z"/>
-              </svg>
-              Cerrar sesión
-          </button>
+          <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors">Cerrar sesión</button>
         </form>
       </div>
     </div>
@@ -206,15 +178,10 @@
                   <label class="block text-[12px] text-slate-600 mb-1">WhatsApp</label>
                   <input type="text" wire:model.defer="whatsapp" class="w-full rounded-xl border-slate-200 bg-white px-3 py-2.5 text-sm shadow-sm focus:ring-2 focus:ring-blue-100">
                 </div>
-                <div>
-                  <label class="block text-[12px] text-slate-600 mb-1">Comisión</label>
-                  <input type="text" wire:model.defer="comision" class="w-full rounded-xl border-slate-200 bg-white px-3 py-2.5 text-sm shadow-sm focus:ring-2 focus:ring-blue-100">
-                </div>
+               
               </div>
               <div>
-                <label class="block text-[12px] text-slate-600 mb-1">Carrera</label>
-                <input type="text" wire:model.defer="carrera" class="w-full rounded-xl border-slate-200 bg-white px-3 py-2.5 text-sm shadow-sm focus:ring-2 focus:ring-blue-100">
-              </div>
+   
               <div>
                 <label class="block text-[12px] text-slate-600 mb-1">Foto de perfil</label>
                 <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3">

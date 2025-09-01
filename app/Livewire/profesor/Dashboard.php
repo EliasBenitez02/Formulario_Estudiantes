@@ -102,8 +102,6 @@ class Dashboard extends Component
             'dni'              => $u->dni ?? '',
             'whatsapp'         => $u->whatsapp ?? '',
             'fecha_nacimiento' => $u->fecha_nacimiento ?? '',
-            'comision'         => $u->comision ?? '',
-            'carrera'          => $u->carrera ?? '',
         ];
         $this->mostrarEditarPerfil = true;
     }
@@ -112,13 +110,11 @@ class Dashboard extends Component
     {
         $user = Auth::user();
 
-        $user->name             = $this->profesorEdit['name'] ?? $user->name;
-        $user->email            = $this->profesorEdit['email'] ?? $user->email;
-        $user->dni              = $this->profesorEdit['dni'] ?? null;
-        $user->whatsapp         = $this->profesorEdit['whatsapp'] ?? null;
-        $user->fecha_nacimiento = $this->profesorEdit['fecha_nacimiento'] ?? null;
-        $user->comision         = $this->profesorEdit['comision'] ?? null;
-        $user->carrera          = $this->profesorEdit['carrera'] ?? null;
+    $user->name             = $this->profesorEdit['name'] ?? $user->name;
+    $user->email            = $this->profesorEdit['email'] ?? $user->email;
+    $user->dni              = $this->profesorEdit['dni'] ?? null;
+    $user->whatsapp         = $this->profesorEdit['whatsapp'] ?? null;
+    $user->fecha_nacimiento = $this->profesorEdit['fecha_nacimiento'] ?? null;
 
         if ($this->fotoPerfilProfesor) {
             $this->validate([
@@ -170,8 +166,10 @@ class Dashboard extends Component
             abort(403, 'No tienes permiso para acceder a este módulo.');
         }
 
+        $profesor = Auth::user();
         $alumnos = User::with('socialProfile')
             ->where('role_id', 3)
+            ->where('course_id', $profesor->course_id)
             ->where(function ($query) {
                 $q = $this->q;
                 $query->where('name', 'like', "%{$q}%")
@@ -184,6 +182,7 @@ class Dashboard extends Component
         if (strlen($this->q) >= 4) {
             $sugerencias = User::with('socialProfile')
                 ->where('role_id', 3)
+                ->where('course_id', $profesor->course_id)
                 ->where(function ($qq) {
                     $qq->where('name', 'like', "%{$this->q}%")
                        ->orWhere('email', 'like', "%{$this->q}%");

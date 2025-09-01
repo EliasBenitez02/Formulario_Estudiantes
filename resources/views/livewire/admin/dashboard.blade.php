@@ -21,6 +21,7 @@
                     <tr>
                         <th class="px-6 py-3 text-left">Nombre</th>
                         <th class="px-6 py-3 text-left">Correo</th>
+                        <th class="px-6 py-3 text-left">Curso Asignado</th>
                         <th class="px-6 py-3 text-left">Acciones</th>
                     </tr>
                 </thead>
@@ -29,6 +30,7 @@
                         <tr class="border-b hover:bg-gray-50">
                             <td class="px-6 py-3 align-top">{{ $profesor->name }}</td>
                             <td class="px-6 py-3 align-top">{{ $profesor->email }}</td>
+                            <td class="px-6 py-3 align-top">{{ $profesor->course?->name ?? '-' }}</td>
                             <td class="px-6 py-3 align-top">
                                 <form method="POST" action="{{ route('admin.delete.profesor', $profesor->id) }}" style="display:inline;">
                                     @csrf
