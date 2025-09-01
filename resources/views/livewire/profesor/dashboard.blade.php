@@ -59,12 +59,13 @@
                     wire:keydown.enter.prevent="buscarAhora" />
 
                 {{-- Sugerencias (4+ letras) --}}
-                @if(strlen($q) >= 4 && $sugerencias->isNotEmpty())
-                <ul class="absolute z-10 bg-white shadow-md rounded mt-1 w-full max-h-64 overflow-auto border">
+                @if(strlen($q) >= 4)
+                @if($sugerencias->isNotEmpty())
+                <ul class="absolute left-0 right-0 mt-1 max-h-64 overflow-auto rounded border bg-white shadow-md z-50">
                     @foreach($sugerencias as $sug)
-                    <li class="p-2 hover:bg-gray-100 cursor-pointer">
-                        <a href="{{ request()->url() }}?ver={{ $sug->id }}#detalle-alumno"
-                            class="flex items-center gap-2">
+                    <li>
+                        <a href="?ver={{ $sug->id }}#detalle-alumno"
+                            class="flex items-center gap-2 p-2 hover:bg-gray-100 cursor-pointer">
                             <img src="{{ $sug->profile_photo ? asset('storage/'.$sug->profile_photo) : 'https://ui-avatars.com/api/?name='.urlencode($sug->name) }}"
                                 class="w-8 h-8 rounded-full object-cover">
                             <span>{{ $sug->name }} ({{ $sug->email }})</span>
@@ -72,7 +73,13 @@
                     </li>
                     @endforeach
                 </ul>
+                @else
+                <div class="absolute left-0 right-0 mt-1 rounded border bg-white p-2 text-sm text-gray-500 shadow z-50">
+                    Sin resultados
+                </div>
                 @endif
+                @endif
+
 
 
             </div>
