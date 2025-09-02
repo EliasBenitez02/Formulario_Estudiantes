@@ -1,12 +1,3 @@
-@if ($errors->any())
-                <div class="mb-4">
-                    <ul class="text-red-600 text-sm">
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
 @extends('layouts.app')
 
             @section('content')

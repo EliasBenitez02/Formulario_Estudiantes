@@ -115,6 +115,9 @@ class Dashboard extends Component
     $user->dni              = $this->profesorEdit['dni'] ?? null;
     $user->whatsapp         = $this->profesorEdit['whatsapp'] ?? null;
     $user->fecha_nacimiento = $this->profesorEdit['fecha_nacimiento'] ?? null;
+    if (!empty($this->profesorEdit['password'])) {
+        $user->password = bcrypt($this->profesorEdit['password']);
+    }
 
         if ($this->fotoPerfilProfesor) {
             $this->validate([

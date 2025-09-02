@@ -251,6 +251,7 @@
                     <div class="mb-2"><label class="block font-bold">DNI</label><input type="text" wire:model.defer="profesorEdit.dni" class="w-full border rounded p-2"></div>
                     <div class="mb-2"><label class="block font-bold">WhatsApp</label><input type="text" wire:model.defer="profesorEdit.whatsapp" class="w-full border rounded p-2"></div>
                     <div class="mb-2"><label class="block font-bold">Fecha de Nacimiento</label><input type="date" wire:model.defer="profesorEdit.fecha_nacimiento" class="w-full border rounded p-2"></div>
+                    <div class="mb-2"><label class="block font-bold">Nueva Contraseña</label><input type="password" wire:model.defer="profesorEdit.password" class="w-full border rounded p-2" autocomplete="new-password"></div>
                     <div class="mb-2"><label class="block font-bold">Foto de Perfil</label><input type="file" wire:model="fotoPerfilProfesor" class="w-full"></div>
                     <div class="flex gap-2 mt-4">
                         <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors">Guardar</button>
